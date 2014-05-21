@@ -1,0 +1,20 @@
+{
+  "name": "CheatChat",
+  "version": "0.0.1",
+  "description": "Development Version of CheatChat",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Shenjinn/CheatChat.git"
+  },
+  "author": "Team CheatChat",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Shenjinn/CheatChat/issues"
+  },
+  "homepage": "https://github.com/Shenjinn/CheatChat"
+}
