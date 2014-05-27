@@ -28,7 +28,7 @@ socket.on('message', function(data){
 $(function() {
     $("#chatControls").hide();
     $("#chatEntries").show();
-    $("#chatEntries").append('<div class = "message"><p>Welcome to da club</p></div>');
+    $("#chatEntries").append('<div class = "message"><p>Welcome, Start by setting your pseudoname</p></div>');
     $("#pseudoSet").click(function() {setPseudo()});
     $("#submit").click(function() {sentMessage()});
 });
