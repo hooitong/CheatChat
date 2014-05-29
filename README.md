@@ -49,3 +49,4 @@ References
 
 *CheatChat Trello* : https://trello.com/b/dBrOeT5H/cheatchat-cheatchat-herokuapp-com
 
+*Project Log* : https://docs.google.com/spreadsheets/d/1ULClgHvCBWqEZXoaCoqDxB9ZZP5fq1VSHCVIzsfRL8E/edit?usp=sharing
