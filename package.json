@@ -9,9 +9,9 @@
   },
   "dependencies": {
     "socket.io": "*",
-    "express": "*",
+    "express": "3.x",
     "jade": "*"
-  },  
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Shenjinn/CheatChat.git"

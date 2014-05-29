@@ -1,24 +1,15 @@
 var express = require('express');
 var http = require('http');
-
 var app = express();
 var server = app.listen(process.env.PORT || 5000);
 var jade = require('jade');
-var io = require('socket.io').listen(server);
+var MemoryStore = express.session.MemoryStore;
+var sessionStore = new MemoryStore();
+var chatServer = require('./lib/chat_server').listen(server);
 
-io.sockets.on('connection', function (socket){
-	socket.on('setPseudo', function(data){
-		socket.set('pseudo', data);
-	});	
 
-	socket.on('message', function(message) {
-		socket.get('pseudo', function (error, name){
-			var data = { 'message' : message, pseudo : name };
-			socket.broadcast.emit('message', data);
-			console.log("user " + name + " send this : " + message);
-		});
-	});
-});
+app.use(express.cookieParser());
+app.use(express.session({store: sessionStore, secret: 'secret', key: 'express.sid'}));
 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
@@ -27,6 +18,5 @@ app.set("view options", { layout: false });
 app.use(express.static(__dirname + '/public'));
 
 app.get('/', function(req, res){
-  res.render('home.jade');
+	res.render('home.jade');
 });
-
