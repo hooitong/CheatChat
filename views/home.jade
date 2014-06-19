@@ -2,16 +2,20 @@ doctype html
 html
 	head
 		title CheatChat
-		script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')
+		script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js")
 		script(src="/socket.io/socket.io.js")
 		script(src="script.js")
 	body
 		div.container
 			header
 				h1 CheatChat - NUS Geographical Chat
-			input(type='text')#pseudoInput
-			button#pseudoSet Set Pseudo
+			input(type='text')#nickInput
+			button#nickSet Set Nick
+			div#locationStatus
 			div#chatEntries
 			div#chatControls
 				input(type='text')#messageInput
-				button#submit Send	
+				button#submit Send
+			div#roomControl
+				input(type='text')#roomInput
+				button#rmJoin Join

@@ -8,7 +8,7 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "socket.io": "*",
+    "socket.io": "0.x",
     "express": "3.x",
     "jade": "*"
   },
