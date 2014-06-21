@@ -1,7 +1,8 @@
 var socket = io.connect();
 
 function addMessage(msg, nick) {
-  $("#chatEntries").append('<div class="message"><p>' + nick + ' : ' + msg + '</p></div>');
+  $("#chatNicks").append('<p>' + nick + '</p>');
+  $("#chatEntries").append('<p>' + msg + '</p>');
 }
 
 function sentMessage(){
@@ -15,6 +16,7 @@ function sentMessage(){
 function setNick(){
   if($("#nickInput").val() != ""){
     socket.emit('setNick', $("#nickInput").val());
+    $('#nickInput').val() = "";
     $('#chatControls').show();
     $('#nickInput').hide();
     $('#nickSet').hide();
@@ -35,14 +37,14 @@ socket.on('message', function(data){
 });
 
 socket.on('adminMessage', function(msg){
-    $("#chatEntries").append('<div class="notification"><p>' + msg + '</p></div>');
+    $("#chatEntries").append('<p>' + msg + '</p>');
 });
 
 $(function() {
   $("#locationStatus").hide();
   $("#chatControls").hide();
   $("#chatEntries").show();
-  $("#chatEntries").append('<div class = "message"><p>Welcome to Cheat Chat.</p></div>');
+  $("#chatEntries").append('<p>Welcome to Cheat Chat.</p>');
   $("#nickSet").click(function() {setNick()});
   $("#submit").click(function() {sentMessage()});
   $("#rmJoin").click(function() {joinRoom()});
