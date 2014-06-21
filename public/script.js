@@ -14,9 +14,9 @@ function sentMessage(){
 }
 
 function setNick(){
-  if($("#nickInput").val() != ""){
+  if($('#nickInput').val() != ""){
     socket.emit('setNick', $("#nickInput").val());
-    $('#nickInput').val() = "";
+    $('#nickInput').val('');
     $('#chatControls').show();
     $('#nickInput').hide();
     $('#nickSet').hide();
@@ -27,8 +27,8 @@ function joinRoom(){
   if($("#roomInput").val() != ""){
     socket.emit('setRoom', $("#roomInput").val());
     $("#locationStatus").show();
-    $("#locationStatus").append('You are now in "' + $("#roomInput").val() + '"');
-    $("#roomInput").val() = "";
+    $("#locationStatus").text('You are now in "' + $("#roomInput").val() + '"');
+    $("#roomInput").val('');
   }
 }
 
