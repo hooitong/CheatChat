@@ -1,22 +1,109 @@
 doctype html
 html
-	head
-		title CheatChat
-		script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js")
-		script(src="/socket.io/socket.io.js")
-		script(src="script.js")
-	body
-		div.container
-			header
-				h1 CheatChat - NUS Geographical Chat
-			input(type='text')#nickInput
-			button#nickSet Set Nick
-			div#locationStatus
-			div#chatNicks
-			div#chatEntries
-			div#chatControls
-				input(type='text')#messageInput
-				button#submit Send
-			div#roomControl
-				input(type='text')#roomInput
-				button#rmJoin Join
+    head
+        title CheatChat
+        meta(name="viewport" content="width=device-width, initial-scale=1")
+        link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
+        script(src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js")
+        script(src='/bootstrap/js/bootstrap.js')
+        script(src="/socket.io/socket.io.js")
+        script(src="script.js")
+
+    body
+        div.container
+
+            div.modal.fade(id="setpseudo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false")
+                div.modal-dialog
+                    div.modal-content
+                        div.modal-header
+                            div.modal-title
+                                h3 Choose a nickname
+                            div.modal-body(text-align:"center")
+                                input(type='text')#nickInput
+                            div.modal-footer
+                                button.btn.btn-primary#nickSet(data-dismiss="modal")
+                                    | Save
+
+            div.modal.fade(id="createRoom" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true")
+                div.modal-dialog
+                    div.modal-content
+                        div.modal-header
+                            button.close(type="button" data-dismiss="modal" aria-hidden="true") &times;
+                            div.modal-title
+                                h3 Create Room
+                            div.modal-body(text-align:"center")
+                                input(type='text')#roomInput
+                            div.modal-footer
+                                button.btn.btn-primary#rmJoin(data-dismiss="modal")
+                                    | Create
+
+            div.modal.fade(id="faq" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true")
+                div.modal-dialog
+                    div.modal-content
+                        div.modal-header
+                            button.close(type="button" data-dismiss="modal" aria-hidden="true") &times;
+                            div.modal-title
+                                h3 faq
+                            div.modal-body
+                                | Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed in nunc non nisl auctor ullamcorper. Nulla dui tellus, pharetra vel bibendum nec, porta id magna. Suspendisse eu ligula eget metus viverra tempor nec vitae lacus. Phasellus in dui in augue volutpat consectetur sed in lorem. Nunc et ullamcorper est. Vestibulum eget sem in erat semper eleifend eget a enim. Sed id posuere purus. Praesent at lectus nec massa eleifend gravida. Aenean vehicula tincidunt pellentesque. Phasellus et turpis ac felis faucibus fringilla. Aenean bibendum, nunc quis ultricies tincidunt, metus sem dictum ipsum, sit amet tincidunt sapien ipsum nec eros. Quisque nec condimentum leo. Nullam non ultricies urna. Nullam molestie eu nunc nec congue. Nullam ultrices felis eget pellentesque faucibus.
+
+            div.modal.fade(id="help" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true")
+                div.modal-dialog
+                    div.modal-content
+                        div.modal-header
+                            button.close(type="button" data-dismiss="modal" aria-hidden="true") &times;
+                            div.modal-title
+                                h3 help
+                            div.modal-body
+                                | Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed in nunc non nisl auctor ullamcorper. Nulla dui tellus, pharetra vel bibendum nec, porta id magna. Suspendisse eu ligula eget metus viverra tempor nec vitae lacus. Phasellus in dui in augue volutpat consectetur sed in lorem. Nunc et ullamcorper est. Vestibulum eget sem in erat semper eleifend eget a enim. Sed id posuere purus. Praesent at lectus nec massa eleifend gravida. Aenean vehicula tincidunt pellentesque. Phasellus et turpis ac felis faucibus fringilla. Aenean bibendum, nunc quis ultricies tincidunt, metus sem dictum ipsum, sit amet tincidunt sapien ipsum nec eros. Quisque nec condimentum leo. Nullam non ultricies urna. Nullam molestie eu nunc nec congue. Nullam ultrices felis eget pellentesque faucibus.
+
+            nav.navbar-default(role="navigation")
+
+                // Brand and toggle get grouped for better mobile display
+                div.navbar-header
+                    button(type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse")
+                        span.sr-only Toggle navigation
+                        span.icon-bar
+                        span.icon-bar
+                        span.icon-bar
+                    a.navbar-brand(href="#")
+                        <img src="/logo.png", width="60", height="32",vertical-align="middle">
+
+                // Collect the nav links, forms, and other content for toggling
+                div.collapse.navbar-collapse.navbar-ex1-collapse
+                    ul.nav.navbar-nav
+                        li
+                            a(href="#help" data-toggle="modal") help
+
+                        li
+                            a(href="#faq", data-toggle="modal") faq
+
+                    ul.nav.navbar-nav.navbar-right
+                        li.dropdown
+                            a.dropdown-toggle(href='#', data-toggle="dropdown")
+                                #locationStatus
+                                b.caret
+                            ul.dropdown-menu
+                                li
+                                    a(href='#') Location 1
+                                li
+                                    a(href='#') Location 2
+                                li.divider
+                                li
+                                    a(href='#createRoom' data-toggle="modal") Create Room
+
+
+
+            p(style="font-size:larger")
+                strong
+                    | Welcome to CheatChat Lobby <br>
+                    | Select your room in the top right hand corner
+
+            div.container(style="word-wrap:break-word")
+                #chatEntries
+
+            div.footer.navbar-fixed-bottom#chatControls
+                input(type='text',style="width:80%")#messageInput
+                button.btn.btn-primary.btn-sm#submit
+                    i.icon-white.icon-ok
+                        |Send
