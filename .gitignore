@@ -1,6 +1,11 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 node_modules
 snippets.js
+=======
+node_modules/
+.idea/
+>>>>>>> FETCH_HEAD
 =======
 node_modules/
 .idea/

@@ -132,6 +132,7 @@ var locations = {
 
 function addMessage(msg, nick) {
 <<<<<<< HEAD
+<<<<<<< HEAD
   $('#chatNicks').append('<p>' + nick + '</p>');
   $('#chatEntries').append('<p>' + msg + '</p>');
 }
@@ -192,12 +193,47 @@ function setNick(){
 }
 
 function joinRoom(){
+=======
+
+    if(nick==="Me"){
+        $("#chatEntries").append('<div style="float:right">'+nick+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div><br><br><div class="bubbleRight" >'+msg+ '</div>');
+    }
+    else{
+        $("#chatEntries").append('<div style="float:left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+nick+'</div><br><br><div class="bubbleLeft" >'+msg+ '</div>');
+    }
+
+
+}
+
+function sentMessage(){
+    if($('#messageInput').val() != ""){
+        socket.emit('message', $('#messageInput').val());
+        addMessage($('#messageInput').val(), "Me");
+        $('#messageInput').val('');
+    }
+}
+
+function setNick(){
+    if($('#nickInput').val() != ""){
+        socket.emit('setNick', $("#nickInput").val());
+        $('#nickInput').val('');
+        $('#chatControls').show();
+        $('#nickInput').hide();
+        $('#nickSet').hide();
+    }
+}
+
+function joinRoom(){
+>>>>>>> FETCH_HEAD
     if($("#roomInput").val() != ""){
         socket.emit('setRoom', $("#roomInput").val());
         $("#locationStatus").show();
         $("#locationStatus").text($("#roomInput").val());
         $("#roomInput").val('');
     }
+<<<<<<< HEAD
+>>>>>>> FETCH_HEAD
+=======
 >>>>>>> FETCH_HEAD
 }
 
@@ -206,6 +242,7 @@ socket.on('message', function(data){
 });
 
 socket.on('adminMessage', function(msg){
+<<<<<<< HEAD
 <<<<<<< HEAD
   $('#chatEntries').append('<p>' + msg + '</p>');
 });
@@ -220,6 +257,8 @@ $(function() {
   $('#rmJoin').click(function() {joinRoom()});
   getLocation();
 =======
+=======
+>>>>>>> FETCH_HEAD
     $("#chatEntries").append('<p><strong>' + msg + '<strong></p>');
 });
 
@@ -231,6 +270,9 @@ $(function() {
     $("#nickSet").click(function() {setNick()});
     $("#submit").click(function() {sentMessage()});
     $("#rmJoin").click(function() {joinRoom()});
+<<<<<<< HEAD
+>>>>>>> FETCH_HEAD
+=======
 >>>>>>> FETCH_HEAD
 });
 
