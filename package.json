@@ -10,7 +10,8 @@
   "dependencies": {
     "socket.io": "1.x",
     "express": "3.x",
-    "jade": "*"
+    "jade": "*",
+    "request": "*"
   },
   "repository": {
     "type": "git",
