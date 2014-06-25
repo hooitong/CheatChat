@@ -134,11 +134,13 @@ var markers = {}
 
 function addMessage(msg, nick) {
   if(nick==="Me"){
-      $("#chatEntries").append('<div style="float:right">'+nick+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div><br><br><div class="bubbleRight" >'+msg+ '</div>');
+      $("#chatEntries").append('<br><br><div style="float:right; padding-right:35px; padding-bottom:20px">'+nick+'<br></div><br><br><div class="bubbleRight" >'+msg+ '</div>');
   }
   else{
-      $("#chatEntries").append('<div style="float:left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+nick+'</div><br><br><div class="bubbleLeft" >'+msg+ '</div>');
+      $("#chatEntries").append('<div style="float:left; padding-left:35px">'+nick+'</div><br><br><div class="bubbleLeft" >'+msg+ '</div>');
   }
+
+  window.scrollTo(0,document.body.scrollHeight);
 }
 
 function sentMessage(){
@@ -211,6 +213,8 @@ $(function() {
   $('#setNick').modal('show');
   $("#chatControls").hide();
   $("#chatEntries").show();
+  $("#chatEntries").append(' <br><br><br><p>Welcome to CheatChat Lobby <br> Click on <a href="#createRoom", data-toggle="modal"><span class="glyphicon glyphicon-globe"></span></a>&nbsp;at the top right hand corner to start.</p>');
+  $("#locationStatus").text("lobby");
   $("#nickSet").click(function() {setNick()});
   $("#submit").click(function() {sentMessage()});
   $("#rmJoin").click(function() {joinRoom()});
