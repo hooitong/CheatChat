@@ -1,6 +1,7 @@
 var socket = io.connect();
 var map;
 var markers = {}
+var currentLoc;
 
 // Credits to ModCrasher for the hardcoded geolocations
 var locations = {
@@ -161,13 +162,8 @@ function setNick(){
   }
 }
 
-function joinRoom(){
-  if($("#roomInput").val() != ""){
-      socket.emit('setRoom', $("#roomInput").val());
-      $("#locationStatus").show();
-      $("#locationStatus").text($("#roomInput").val());
-      $("#roomInput").val('');
-  }
+function createRoom(){
+  socket.emit('setRoom', currentLoc);
 }
 
 socket.on('message', function(data){
@@ -179,10 +175,14 @@ socket.on('adminMessage', function(msg){
 });
 
 socket.on('updateRooms', function(data){
-  for (var key in markers) { // remove empty markers
+  for (var key in markers) {
+    // remove empty markers
     if(data.names.indexOf(key) == -1){
       markers[key].setMap(null);
       markers[key] = null;
+      if(key.localeCompare(currentLoc) == 0){
+        // ENABLE DA CREATE BUTTON / SHOW
+      }
     }
   }
 
@@ -210,6 +210,10 @@ socket.on('updateRooms', function(data){
         google.maps.event.addListener(marker, 'mouseover', function() { infowindow.open(map,marker); });
         google.maps.event.addListener(marker, "mouseout", function () { infowindow.close(); });
         google.maps.event.addListener(marker, "click", function () { socket.emit('setRoom', room); });
+
+        if(key.localeCompare(currentLoc) == 0){
+          // DISABLE DA CREATE BUTTON / HIDE
+        }
       } else {
         markers[room].set('labelContent', data.nums[room]);
       }
@@ -225,7 +229,7 @@ $(function() {
   $("#locationStatus").text("lobby");
   $("#nickSet").click(function() {setNick()});
   $("#submit").click(function() {sentMessage()});
-  $("#rmJoin").click(function() {joinRoom()});
+  $("#rmCreate").click(function() {createRoom()});
   getLocation();
 });
 
@@ -247,6 +251,7 @@ function showPosition(position) {
       lat = jsonObj[0].lat;
       lon = jsonObj[0].lon;
       $('#locationStatus').text(jsonObj[0].name);
+      currentLoc = jsonObj[0].code;
     } else {
       // outside NUS
       console.log('outside NUS, no building found.');
@@ -268,6 +273,6 @@ function showPosition(position) {
     map = new google.maps.Map(document.getElementById('mapholder'),myOptions);
     setInterval(function() {
       socket.emit('updateRooms');
-    }, 5000);
+    }, 1000);
   });
 }

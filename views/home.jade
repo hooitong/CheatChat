@@ -1,7 +1,7 @@
 doctype html
 html
     head
-        title Cheat Chat
+        title CheatChat
         meta(name="viewport" content="width=device-width, initial-scale=1")
         link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
         link(rel='stylesheet', href='/style.css')
@@ -36,10 +36,9 @@ html
                             div.modal-title
                                 div#mapholder
                             div.modal-body(text-align:"center")
-                                input(type='text')#roomInput
-                                | CHANGE TO MAP PLACEHOLDER
+
                             div.modal-footer
-                                button.btn.btn-primary#rmJoin(data-dismiss="modal")
+                                button.btn.btn-primary#rmCreate(data-dismiss="modal")
                                     | Create
 
             div.modal.fade(id="faq" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true")
