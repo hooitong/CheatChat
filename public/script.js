@@ -129,6 +129,8 @@ var locations = {
   'USP-TR1':[1.30646,103.773571],
   'MLounge':[1.30646,103.773571],
 }
+var map;
+var markers = {}
 
 function addMessage(msg, nick) {
   if(nick==="Me"){
@@ -174,58 +176,86 @@ socket.on('adminMessage', function(msg){
   $("#chatEntries").append('<p><strong>' + msg + '<strong></p>');
 });
 
+socket.on('updateRooms', function(data){
+  for (var key in markers) { // remove empty markers
+    if(data.names.indexOf(key) == -1){
+      markers[key].setMap(null);
+      markers[key] = null;
+    }
+  }
+
+  for(roomIndex in data.names){
+    var room = data.names[roomIndex];
+    if(locations[room] != null){
+      if(markers[room] == null){
+        latlon = new google.maps.LatLng(locations[room][0], locations[room][1]);
+        var marker = new MarkerWithLabel({
+          position: latlon,
+          map: map,
+          draggable: false,
+          labelContent: data.nums[room], // your number
+          icon: "images/chat_marker.png",
+          labelAnchor: new google.maps.Point(-11, 53), // Calibrated with image
+          labelClass: "labels", // the CSS class for the label
+          labelInBackground: false
+        });
+        markers[room] = marker;
+      } else {
+        markers[room].set('labelContent', data.nums[room]);
+      }
+    }
+  }
+});
+
 $(function() {
-  $('#setpseudo').modal('show');
+  $('#setNick').modal('show');
   $("#chatControls").hide();
   $("#chatEntries").show();
-  $("#locationStatus").text("lobby");
   $("#nickSet").click(function() {setNick()});
   $("#submit").click(function() {sentMessage()});
   $("#rmJoin").click(function() {joinRoom()});
   getLocation();
 });
 
-var x = document.getElementById('errorMsg');
 function getLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition,showError);
-    } else {
-        x.innerHTML = 'Geolocation is not supported by this browser.';}
+  if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(showPosition);
+  }
 }
 
 function showPosition(position) {
   lat = position.coords.latitude;
   lon = position.coords.longitude;
   socket.emit('sendGeo', { 'lat' : lat, 'lon' : lon });
-  latlon = new google.maps.LatLng(lat, lon)
-  mapholder = document.getElementById('mapholder')
-  mapholder.style.height='400px';
-  mapholder.style.width='600px';
 
-  var myOptions={
-    center:latlon,zoom:14,
-    mapTypeId:google.maps.MapTypeId.ROADMAP,
-    mapTypeControl:false,
-    navigationControlOptions:{style:google.maps.NavigationControlStyle.SMALL}
-  }
-
-  var map = new google.maps.Map(document.getElementById('mapholder'),myOptions);
-  var marker = new google.maps.Marker({position:latlon,map:map,title:'You are here!'});
-}
-
-function showError(error) {
-    switch(error.code) {
-        case error.PERMISSION_DENIED:
-            x.innerHTML = 'User denied the request for Geolocation.'
-            break;
-        case error.POSITION_UNAVAILABLE:
-            x.innerHTML = 'Location information is unavailable.'
-            break;
-        case error.TIMEOUT:
-            x.innerHTML = 'The request to get user location timed out.'
-            break;
-        case error.UNKNOWN_ERROR:
-            x.innerHTML = 'An unknown error occurred.'
-            break;
+  socket.on('currentLoc', function(json){
+    var jsonObj = $.parseJSON(json);
+    if(jsonObj[0] != null) {
+      // in NUS, use first location (nearest based on json response)
+      lat = jsonObj[0].lat;
+      lon = jsonObj[0].lon;
+      $('#locationStatus').text(jsonObj[0].name);
+    } else {
+      // outside NUS
+      console.log('outside NUS, no building found.');
+      $('#locationStatus').text('Outside NUS');
     }
+
+    latlon = new google.maps.LatLng(lat, lon)
+    mapholder = document.getElementById('mapholder')
+    mapholder.style.height='400px'; // to be moved to css
+    mapholder.style.width='600px';
+
+    var myOptions={
+      center:latlon,zoom:16,
+      mapTypeId:google.maps.MapTypeId.ROADMAP,
+      mapTypeControl:false,
+      navigationControlOptions:{style:google.maps.NavigationControlStyle.SMALL}
+    }
+
+    map = new google.maps.Map(document.getElementById('mapholder'),myOptions);
+    setInterval(function() {
+      socket.emit('updateRooms');
+    }, 5000);
+  });
 }
