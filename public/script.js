@@ -1,4 +1,6 @@
 var socket = io.connect();
+var map;
+var markers = {}
 
 // Credits to ModCrasher for the hardcoded geolocations
 var locations = {
@@ -129,8 +131,6 @@ var locations = {
   'USP-TR1':[1.30646,103.773571],
   'MLounge':[1.30646,103.773571],
 }
-var map;
-var markers = {}
 
 function addMessage(msg, nick) {
   if(nick==="Me"){
@@ -199,9 +199,17 @@ socket.on('updateRooms', function(data){
           icon: "images/chat_marker.png",
           labelAnchor: new google.maps.Point(-11, 53), // Calibrated with image
           labelClass: "labels", // the CSS class for the label
-          labelInBackground: false
+          labelInBackground: false,
+          animation: google.maps.Animation.DROP
         });
         markers[room] = marker;
+        var infowindow = new google.maps.InfoWindow({
+            content: room,
+            maxWidth: 100
+        });
+        google.maps.event.addListener(marker, 'mouseover', function() { infowindow.open(map,marker); });
+        google.maps.event.addListener(marker, "mouseout", function () { infowindow.close(); });
+        google.maps.event.addListener(marker, "click", function () { socket.emit('setRoom', room); });
       } else {
         markers[room].set('labelContent', data.nums[room]);
       }
@@ -251,8 +259,8 @@ function showPosition(position) {
     mapholder.style.width='600px';
 
     var myOptions={
-      center:latlon,zoom:16,
-      mapTypeId:google.maps.MapTypeId.ROADMAP,
+      center:latlon,zoom:14,
+      mapTypeId:google.maps.MapTypeId.SATELLITE,
       mapTypeControl:false,
       navigationControlOptions:{style:google.maps.NavigationControlStyle.SMALL}
     }
