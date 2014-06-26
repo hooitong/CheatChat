@@ -162,6 +162,8 @@ function setNick(){
 
 function createRoom(){
   socket.emit('setRoom', currentLoc);
+  $("#chatEntries").html(' <br><br><br><p>Welcome to '+ room +' <br> Click on <a href="#createRoom", data-toggle="modal"><span class="glyphicon glyphicon-globe"></span></a>&nbsp;at the top right hand corner to change rooms.</p>');
+  $('#messageInput').focus();
 }
 
 socket.on('message', function(data){
@@ -218,13 +220,14 @@ function fixLocalScope(room, marker){
     content: room,
     maxWidth: 100
   });
-  google.maps.event.addListener(marker, "click", function () { socket.emit('setRoom', room); $('#createRoom').modal('hide'); });
+  google.maps.event.addListener(marker, "click", function () { socket.emit('setRoom', room);
+    $("#chatEntries").html(' <br><br><br><p>Welcome to '+ room +' <br> Click on <a href="#createRoom", data-toggle="modal"><span class="glyphicon glyphicon-globe"></span></a>&nbsp;at the top right hand corner to change rooms.</p>');
+    $('#createRoom').modal('hide'); $('#messageInput').focus(); });
   google.maps.event.addListener(marker, 'mouseover', function() { infowindow.open(map,marker); });
   google.maps.event.addListener(marker, "mouseout", function () { infowindow.close(); });
 }
 
 $(function() {
-
   $('#nickMsg').html('<h3>What\'s your nickname?</h3>');
   $('#setNick').on('shown.bs.modal', function () {
     $('#nickInput').focus();
@@ -237,14 +240,15 @@ $(function() {
   $("#nickSet").click(function() {setNick()});
   $("#submit").click(function() {sentMessage()});
   $("#rmCreate").click(function() {createRoom()});
-  $("#mapOpen").click(function(){fixMap()});
-  $("")
   getLocation();
   $('#nickInput').bind("enterKey",function(e){
     if($('#nickInput').val() != ""){
       $('#currentName').text('Currently as ' + $("#nickInput").val());
       setNick();
       $('#setNick').modal('hide');
+      if(currentLoc.localeCompare('Outside NUS') != 0){
+        fixMap();
+      }
       setTimeout(function() {
         $('#messageInput').focus();
         $('#nickMsg').html('<h3>Change your nickname?</h3>');
@@ -275,12 +279,12 @@ $(function() {
 });
 
 function fixMap(){
-    $('#createRoom').modal('show');
-    setTimeout(function() {
-      var center = map.getCenter();
-      google.maps.event.trigger(map, "resize");
-      map.setCenter(center);
-    }, 300);
+  $('#createRoom').modal('show');
+  setTimeout(function() {
+    var center = map.getCenter();
+    google.maps.event.trigger(map, "resize");
+    map.setCenter(center);
+  }, 300);
 }
 
 function getLocation() {
@@ -304,8 +308,15 @@ function showPosition(position) {
       currentLoc = jsonObj[0].code;
     } else {
       // outside NUS
-      console.log('outside NUS, no building found.');
+      currentLoc = 'Outside NUS';
       $('#locationStatus').text('Outside NUS');
+      socket.emit('setRoom', currentLoc);
+    }
+
+    if(currentLoc.localeCompare('Outside NUS') == 0){
+      $("[rel=tooltip]").tooltip({ placement: 'bottom'});
+    } else{
+      $("#mapOpen").click(function(){fixMap()});
     }
 
     latlon = new google.maps.LatLng(lat, lon);
