@@ -181,7 +181,9 @@ socket.on('updateRooms', function(data){
       markers[key].setMap(null);
       markers[key] = null;
       if(key.localeCompare(currentLoc) == 0){
-        // ENABLE DA CREATE BUTTON / SHOW
+        //$('#rmCreate').setAttribute('disabled="enabled"');
+        $('#rmCreate').removeAttribute('disabled="disabled"');
+        //test either one of them
       }
     }
   }
@@ -212,10 +214,10 @@ socket.on('updateRooms', function(data){
         google.maps.event.addListener(marker, "click", function () { socket.emit('setRoom', room); });
 
         if(key.localeCompare(currentLoc) == 0){
-          // DISABLE DA CREATE BUTTON / HIDE
+          $('#rmCreate').setAttribute('disabled="disabled"');
         }
       } else {
-        markers[room].set('labelContent', data.nums[room]);
+          markers[room].set('labelContent', data.nums[room]);
       }
     }
   }
@@ -226,7 +228,7 @@ $(function() {
   $("#chatControls").hide();
   $("#chatEntries").show();
   $("#chatEntries").append(' <br><br><br><p>Welcome to CheatChat Lobby <br> Click on <a href="#createRoom", data-toggle="modal"><span class="glyphicon glyphicon-globe"></span></a>&nbsp;at the top right hand corner to start.</p>');
-  $("#locationStatus").text("lobby");
+  $("#locationStatus").text("loading");
   $("#nickSet").click(function() {setNick()});
   $("#submit").click(function() {sentMessage()});
   $("#rmCreate").click(function() {createRoom()});
@@ -258,10 +260,7 @@ function showPosition(position) {
       $('#locationStatus').text('Outside NUS');
     }
 
-    latlon = new google.maps.LatLng(lat, lon)
-    mapholder = document.getElementById('mapholder')
-    mapholder.style.height='400px'; // to be moved to css
-    mapholder.style.width='600px';
+    latlon = new google.maps.LatLng(lat, lon);
 
     var myOptions={
       center:latlon,zoom:14,

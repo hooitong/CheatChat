@@ -34,12 +34,12 @@ html
                         div.modal-header
                             button.close(type="button" data-dismiss="modal" aria-hidden="true") &times;
                             div.modal-title
-                                div#mapholder
-                            div.modal-body(text-align:"center")
-
+                                h3 Please select a room
+                            div.modal-body
+                                div.google-maps#mapholder
                             div.modal-footer
-                                button.btn.btn-primary#rmCreate(data-dismiss="modal")
-                                    | Create
+                                button.btn.btn-primary.disabled#rmCreate(data-dismiss="modal")
+                                    | Join
 
             div.modal.fade(id="faq" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true")
                 div.modal-dialog
@@ -95,10 +95,7 @@ html
                                 span.glyphicon.glyphicon-globe
                         li
                             span(style="padding-right:100px")  &nbsp;
-
-
-
-            div(style="word-wrap:break-word; padding-bottom:80px")
+            div(style="word-wrap:break-word; padding-bottom:85px")
                 #chatEntries
 
             div.footer.navbar-fixed-bottom(style="padding-bottom:10px;padding-top:10px;background-color:black")#chatControls
