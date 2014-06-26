@@ -124,7 +124,7 @@ var locations = {
   'MD9':[1.29673,103.781255],
   'MD10':[1.296486,103.781797],
   'MD11':[1.29605,103.781731],
-
+  'FOD': [1.296962,103.781619],
 
   //USP
   'USP-SR1':[1.30646,103.773571],
@@ -157,8 +157,6 @@ function setNick(){
       socket.emit('setNick', $("#nickInput").val());
       $('#nickInput').val('');
       $('#chatControls').show();
-      $('#nickInput').hide();
-      $('#nickSet').hide();
   }
 }
 
@@ -175,55 +173,62 @@ socket.on('adminMessage', function(msg){
 });
 
 socket.on('updateRooms', function(data){
-  for (var key in markers) {
-    // remove empty markers
-    if(data.names.indexOf(key) == -1){
-      markers[key].setMap(null);
-      markers[key] = null;
-      if(key.localeCompare(currentLoc) == 0){
-        //$('#rmCreate').setAttribute('disabled="enabled"');
-        $('#rmCreate').removeAttribute('disabled="disabled"');
-        //test either one of them
-      }
-    }
-  }
-
   for(roomIndex in data.names){
     var room = data.names[roomIndex];
-    if(locations[room] != null){
-      if(markers[room] == null){
-        latlon = new google.maps.LatLng(locations[room][0], locations[room][1]);
-        var marker = new MarkerWithLabel({
-          position: latlon,
-          map: map,
-          draggable: false,
-          labelContent: data.nums[room], // your number
-          icon: "images/chat_marker.png",
-          labelAnchor: new google.maps.Point(-11, 53), // Calibrated with image
-          labelClass: "labels", // the CSS class for the label
-          labelInBackground: false,
-          animation: google.maps.Animation.DROP
-        });
-        markers[room] = marker;
-        var infowindow = new google.maps.InfoWindow({
-            content: room,
-            maxWidth: 100
-        });
-        google.maps.event.addListener(marker, 'mouseover', function() { infowindow.open(map,marker); });
-        google.maps.event.addListener(marker, "mouseout", function () { infowindow.close(); });
-        google.maps.event.addListener(marker, "click", function () { socket.emit('setRoom', room); });
-
-        if(key.localeCompare(currentLoc) == 0){
-          $('#rmCreate').setAttribute('disabled="disabled"');
+    if(locations[room] != null){ // valid room (not those defaults)
+        if(markers[room] == null){ //if there is no marker for it
+          if(data.nums[room] != 0){ // if there is someone
+            latlon = new google.maps.LatLng(locations[room][0], locations[room][1]);
+            var marker = new MarkerWithLabel({
+              position: latlon,
+              map: map,
+              draggable: false,
+              labelContent: data.nums[room],
+              icon: "images/chat_marker.png",
+              labelAnchor: new google.maps.Point(-11, 53), // Calibrated with image
+              labelClass: "labels",
+              labelInBackground: false,
+              animation: google.maps.Animation.DROP
+            });
+            markers[room] = marker;
+            fixLocalScope(room, marker);
+            if(room.localeCompare(currentLoc) == 0){
+              $('#rmCreate').prop('disabled', true);
+              $('#creationSection').attr('hidden', true);
+            }
+          }
+        } else {
+          if(data.nums[room] != 0){ // if there is someone
+            markers[room].set('labelContent', data.nums[room]);
+          }else{
+            markers[room].setMap(null);
+            markers[room] = null;
+            if(room.localeCompare(currentLoc) == 0){
+              $('#rmCreate').prop('disabled', false);
+              $('#creationSection').attr('hidden', false);
+            }
+          }
         }
-      } else {
-          markers[room].set('labelContent', data.nums[room]);
-      }
     }
   }
 });
 
+function fixLocalScope(room, marker){
+  var infowindow = new google.maps.InfoWindow({
+    content: room,
+    maxWidth: 100
+  });
+  google.maps.event.addListener(marker, "click", function () { socket.emit('setRoom', room); $('#createRoom').modal('hide'); });
+  google.maps.event.addListener(marker, 'mouseover', function() { infowindow.open(map,marker); });
+  google.maps.event.addListener(marker, "mouseout", function () { infowindow.close(); });
+}
+
 $(function() {
+
+  $('#nickMsg').html('<h3>What\'s your nickname?</h3>');
+  $('#setNick').on('shown.bs.modal', function () {
+    $('#nickInput').focus();
+  })
   $('#setNick').modal('show');
   $("#chatControls").hide();
   $("#chatEntries").show();
@@ -232,8 +237,51 @@ $(function() {
   $("#nickSet").click(function() {setNick()});
   $("#submit").click(function() {sentMessage()});
   $("#rmCreate").click(function() {createRoom()});
+  $("#mapOpen").click(function(){fixMap()});
+  $("")
   getLocation();
+  $('#nickInput').bind("enterKey",function(e){
+    if($('#nickInput').val() != ""){
+      $('#currentName').text('Currently as ' + $("#nickInput").val());
+      setNick();
+      $('#setNick').modal('hide');
+      setTimeout(function() {
+        $('#messageInput').focus();
+        $('#nickMsg').html('<h3>Change your nickname?</h3>');
+        $('#setNick').data('bs.modal').options.backdrop = 'true';
+        $('#setNick').data('bs.modal').options.keyboard = 'true';
+        $('#closeBtn').html('<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>');
+    }, 300);
+    }
+  });
+  $('#nickInput').keyup(function(e){
+      if(e.keyCode == 13)
+      {
+          $(this).trigger("enterKey");
+      }
+  });
+  $('#messageInput').bind("enterKey",function(e){
+    if($('#messageInput').val() != ""){
+      sentMessage();
+    }
+  });
+
+  $('#messageInput').keyup(function(e){
+    if(e.keyCode == 13)
+    {
+        $(this).trigger("enterKey");
+    }
+  });
 });
+
+function fixMap(){
+    $('#createRoom').modal('show');
+    setTimeout(function() {
+      var center = map.getCenter();
+      google.maps.event.trigger(map, "resize");
+      map.setCenter(center);
+    }, 300);
+}
 
 function getLocation() {
   if (navigator.geolocation) {
@@ -263,13 +311,14 @@ function showPosition(position) {
     latlon = new google.maps.LatLng(lat, lon);
 
     var myOptions={
-      center:latlon,zoom:14,
-      mapTypeId:google.maps.MapTypeId.SATELLITE,
+      center:latlon,zoom:16,
+      mapTypeId:google.maps.MapTypeId.ROADMAP,
       mapTypeControl:false,
       navigationControlOptions:{style:google.maps.NavigationControlStyle.SMALL}
     }
 
     map = new google.maps.Map(document.getElementById('mapholder'),myOptions);
+
     setInterval(function() {
       socket.emit('updateRooms');
     }, 1000);

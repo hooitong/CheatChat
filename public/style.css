@@ -1,4 +1,23 @@
 /* CheatChat StyleSheet */
+#nickInput {
+  background-color: transparent;
+  border: none;
+  border-bottom: 2px solid #fff;
+  outline: none;
+  padding-bottom: 15px;
+  text-align: center;
+  width: 400px;
+}
+
+#changeInput {
+  background-color: transparent;
+  border: none;
+  border-bottom: 2px solid #fff;
+  outline: none;
+  padding-bottom: 15px;
+  text-align: center;
+  width: 400px;
+}
 
 /* Speech Bubble Effect */
 .bubbleLeft
@@ -93,7 +112,7 @@
 
 .google-maps {
     position: relative;
-    padding-bottom: 75%;
+    padding-bottom: 45%;
     height: 0;
     overflow: hidden;
 }

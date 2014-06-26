@@ -20,46 +20,26 @@ html
                 div.modal-dialog
                     div.modal-content
                         div.modal-header
-                            div.modal-title
-                                h3 Choose a nickname
-                            div.modal-body(text-align:"center")
+                            #closeBtn
+                            div.modal-title(align="center")
+                                #nickMsg
+                            div.modal-body(align="center")
                                 input(type='text')#nickInput
-                            div.modal-footer
-                                button.btn.btn-primary#nickSet(data-dismiss="modal")
-                                    | Save
+
 
             div.modal.fade(id="createRoom" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true")
                 div.modal-dialog
                     div.modal-content
                         div.modal-header
                             button.close(type="button" data-dismiss="modal" aria-hidden="true") &times;
-                            div.modal-title
-                                h3 Please select a room
+                            div.modal-title(align="center")
+                                h4 Chat Network Map
+                                h6 Click on any chat marker to join the room. If noone's at your location, create one below!
                             div.modal-body
                                 div.google-maps#mapholder
-                            div.modal-footer
-                                button.btn.btn-primary.disabled#rmCreate(data-dismiss="modal")
-                                    | Join
-
-            div.modal.fade(id="faq" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true")
-                div.modal-dialog
-                    div.modal-content
-                        div.modal-header
-                            button.close(type="button" data-dismiss="modal" aria-hidden="true") &times;
-                            div.modal-title
-                                h3 faq
-                            div.modal-body
-                                | Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed in nunc non nisl auctor ullamcorper. Nulla dui tellus, pharetra vel bibendum nec, porta id magna. Suspendisse eu ligula eget metus viverra tempor nec vitae lacus. Phasellus in dui in augue volutpat consectetur sed in lorem. Nunc et ullamcorper est. Vestibulum eget sem in erat semper eleifend eget a enim. Sed id posuere purus. Praesent at lectus nec massa eleifend gravida. Aenean vehicula tincidunt pellentesque. Phasellus et turpis ac felis faucibus fringilla. Aenean bibendum, nunc quis ultricies tincidunt, metus sem dictum ipsum, sit amet tincidunt sapien ipsum nec eros. Quisque nec condimentum leo. Nullam non ultricies urna. Nullam molestie eu nunc nec congue. Nullam ultrices felis eget pellentesque faucibus.
-
-            div.modal.fade(id="help" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true")
-                div.modal-dialog
-                    div.modal-content
-                        div.modal-header
-                            button.close(type="button" data-dismiss="modal" aria-hidden="true") &times;
-                            div.modal-title
-                                h3 help
-                            div.modal-body
-                                | Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed in nunc non nisl auctor ullamcorper. Nulla dui tellus, pharetra vel bibendum nec, porta id magna. Suspendisse eu ligula eget metus viverra tempor nec vitae lacus. Phasellus in dui in augue volutpat consectetur sed in lorem. Nunc et ullamcorper est. Vestibulum eget sem in erat semper eleifend eget a enim. Sed id posuere purus. Praesent at lectus nec massa eleifend gravida. Aenean vehicula tincidunt pellentesque. Phasellus et turpis ac felis faucibus fringilla. Aenean bibendum, nunc quis ultricies tincidunt, metus sem dictum ipsum, sit amet tincidunt sapien ipsum nec eros. Quisque nec condimentum leo. Nullam non ultricies urna. Nullam molestie eu nunc nec congue. Nullam ultrices felis eget pellentesque faucibus.
+                            div.modal-footer#creationSection
+                                button.btn.btn-primary#rmCreate(data-dismiss="modal")
+                                    | Create
 
             nav.navbar-default.navbar-fixed-top(role="navigation")
 
@@ -74,24 +54,20 @@ html
                         span.icon-bar
 
                     a.navbar-brand(href="#")
-                        <img src="/images/logo.png", width="60", height="32">
+                        <img src="/images/logo.png", width="92px", height="42px">
 
                 // Collect the nav links, forms, and other content for toggling
                 div.collapse.navbar-collapse.navbar-ex1-collapse
                     ul.nav.navbar-nav
                         li
-                            a(href="#help" data-toggle="modal") help
-
-                        li
-                            a(href="#faq", data-toggle="modal") faq
-
+                            a(href="#setNick", data-toggle="modal")
+                                #currentName
                     ul.nav.navbar-nav.navbar-right
                         li
                             span.navbar-text
                                 #locationStatus
-
                         li
-                            a(href="#createRoom" , data-toggle="modal")
+                            a(id="mapOpen", href="#")
                                 span.glyphicon.glyphicon-globe
                         li
                             span(style="padding-right:100px")  &nbsp;
@@ -99,7 +75,7 @@ html
                 #chatEntries
 
             div.footer.navbar-fixed-bottom(style="padding-bottom:10px;padding-top:10px;background-color:black")#chatControls
-                input(type='text',style="width:50%; height:31px")#messageInput
+                input(type='text',style="width:50%; height:29px; padding-left:5px; padding-bottom:3px")#messageInput
                 button.btn.btn-primary.btn-sm#submit
                     |Send &nbsp;
                     i.glyphicon.glyphicon-send
