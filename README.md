@@ -48,7 +48,7 @@ This time we will try to express our final iteration with user stories.
 
 Time Log
 --------
-TBA
+Spreadsheet @ Google Drive : [https://docs.google.com/spreadsheets/d/1ULClgHvCBWqEZXoaCoqDxB9ZZP5fq1VSHCVIzsfRL8E/edit#gid=33422991](https://docs.google.com/spreadsheets/d/1ULClgHvCBWqEZXoaCoqDxB9ZZP5fq1VSHCVIzsfRL8E/edit#gid=33422991)
 
 
 Milestone 1
