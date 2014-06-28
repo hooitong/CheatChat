@@ -169,6 +169,10 @@ div.infowindow-content {
     height: 100% !important;
 }
 
+.errorMsg{
+  color: #F00000;
+}
+
 .spinner {
   margin: 100px auto;
   width: 50px;

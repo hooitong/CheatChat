@@ -218,15 +218,13 @@ function sentMessage(){
 function setNick(){
   if($('#nickInput').val() != ""){
       socket.emit('setNick', cleanInput($("#nickInput").val()));
-      $('#nickInput').val('');
-      $('#chatControls').show();
   }
 }
 
 function createRoom(){
   socket.emit('setRoom', currentLoc);
   $("#chatEntries").html(' <br><br><br><p>Welcome to <b>'+ locations[currentLoc][2]  +'</b> <br> Click on <a href="#createRoom", data-toggle="modal"><span class="glyphicon glyphicon-globe"></span></a>&nbsp;at the top right hand corner to change room/building.</p>');
-  $('#chatEntries').hide().fadeIn(5000);
+  $('#chatEntries').hide().fadeIn(3500);
 }
 
 socket.on('message', function(data){
@@ -287,13 +285,15 @@ function fixLocalScope(room, marker){
   google.maps.event.addListener(marker, "click", function () { socket.emit('setRoom', room);
     $("#chatEntries").html(' <br><br><br><p>Welcome to <b>'+ locations[room][2]  +'</b> <br> Click on <a href="#createRoom", data-toggle="modal"><span class="glyphicon glyphicon-globe"></span></a>&nbsp;at the top right hand corner to change room/building.</p>');
     $('#createRoom').modal('hide');
-    $('#chatEntries').hide().fadeIn(5000);
+    $('#chatEntries').hide().fadeIn(3500);
   });
   google.maps.event.addListener(marker, 'mouseover', function() { infowindow.open(map,marker); });
   google.maps.event.addListener(marker, "mouseout", function () { infowindow.close(); });
 }
 
 $(function() {
+  $('#error').html('Name has already been taken.');
+  $('#error').hide();
   $("#locationStatus").text("loading");
   getLocation();
   $('#nickMsg').html('<h3>What\'s your nickname?</h3>');
@@ -310,20 +310,28 @@ $(function() {
   $("#chatControls").hide();
   $("#chatEntries").show();
   $("#chatEntries").html(' <br><br><br><p>Welcome to CheatChat Lobby <br> Click on <a href="#createRoom", data-toggle="modal"><span class="glyphicon glyphicon-globe"></span></a>&nbsp;at the top right hand corner to start.</p>');
-  $("#nickSet").click(function() {setNick()});
   $("#submit").click(function() {sentMessage()});
   $("#rmCreate").click(function() {createRoom()});
   $('#nickInput').bind("enterKey",function(e){
     if($('#nickInput').val() != ""){
-      $('#currentName').text('Currently as ' + cleanInput($("#nickInput").val()));
+      $('#error').hide();
       setNick();
-      $('#setNick').modal('hide');
-      setTimeout(function() {
-        $('#nickMsg').html('<h3>Change your nickname?</h3>');
-        $('#setNick').data('bs.modal').options.backdrop = 'true';
-        $('#setNick').data('bs.modal').options.keyboard = 'true';
-        $('#closeBtn').html('<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>');
-    }, 1000);
+      socket.on('nameTaken', function(isTaken){
+        if(isTaken){
+          $('#error').hide().fadeIn(2000);
+        } else {
+          $('#currentName').text('Currently as ' + cleanInput($("#nickInput").val()));
+          $('#setNick').modal('hide');
+          $('#chatControls').show();
+          setTimeout(function() {
+            $('#nickMsg').html('<h3>Change your nickname?</h3>');
+            $('#setNick').data('bs.modal').options.backdrop = 'true';
+            $('#setNick').data('bs.modal').options.keyboard = 'true';
+            $('#closeBtn').html('<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>');
+            $('#nickInput').val('');
+          }, 1000);
+        }
+      });
     }
   });
   $('#nickInput').keyup(function(e){
@@ -346,15 +354,6 @@ $(function() {
   });
 });
 
-function autoMap(){
-  if(initialMap == true){
-    fixMap();
-    initialMap = false;
-  }else{
-    $('#messageInput').focus();
-  }
-}
-
 function checkMenu() {
   if(initialModal == true && currentLoc == null){
     $('#loading').modal('show');
@@ -363,17 +362,20 @@ function checkMenu() {
   if (currentLoc == null) {
       setTimeout("checkMenu();", 1000);
       return;
-  } else {
+  } else if(initialMap == true) {
     $('#loading').modal('hide');
     initialModal = false;
+    initialMap = false;
     if(currentLoc.localeCompare('Outside NUS') != 0){
-      autoMap();
+      fixMap();
     }else{
       $("#chatEntries").html('<br><br><br><p>You are now assigned to speak with people <i>outside NUS</i>.</p>');
-      $('#chatEntries').hide().fadeIn(5000);
+      $('#chatEntries').hide().fadeIn(3500);
       socket.emit('setRoom', currentLoc);
       $('#messageInput').focus();
     }
+  } else {
+    $('#messageInput').focus();
   }
 }
 

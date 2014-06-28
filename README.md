@@ -25,14 +25,14 @@ We have integrated Bootstrap such that the design can support multiple browsers 
 
 > Integrate NUS Living Labs API to check geographical location of user
 
-Unfortunately, the API is quite limited and we cannot lock down the user in room by room basis as planned. Thus we fall back by zooming out the app scope to building by building basis and is successfully implemented in the current iteration. 
+Unfortunately, the API is quite limited and we cannot lock down the user in room by room basis as planned. Thus we fall back by zooming out the app scope to building by building basis and is successfully implemented in the current iteration.
 
 > Ability to segregate users into different rooms based on geographical location
 
 As mentioned above, we have successfully implemented where the user (in school) can create/join a room at his current location (building) or join other available/occupied buildings in the current map. It is ready for acceptance testing (however needs to be tested in school vicinity or using the mock application).
 
 ####Developer's Note for current iteration
-> Our team has completed the application functionality wise and initial design, however there are many other things such as validation, better XSS protection (due to nature of app), cross-compatibility test with different browsers (esp. difficult ones like IE) which we will push it to the next iteration to further polish/finetune our application before launching for production.
+> Our team has completed the application functionality wise and initial design, however there are many other things such as validation, better XSS protection (due to nature of app), cross-compatibility test with different browsers (esp. difficult ones like IE), color-coded schemes/names, flood prevention, which we will push it to the next iteration to further polish/finetune our application before launching for production.
 
 Next Iteration
 ---------
