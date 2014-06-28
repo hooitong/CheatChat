@@ -17,8 +17,8 @@ div.infowindow-content {
 .bubble {
   box-sizing: border-box;
   float: left;
-  width: 30%;
-  max-width: 80%;
+  min-width: 30%;
+  max-width: 40%;
   position: relative;
   clear: both;
 
