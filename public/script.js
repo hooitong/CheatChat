@@ -2,10 +2,9 @@ var socket = io.connect();
 var map;
 var markers = {}
 var currentLoc;
-
-// Credits to ModCrasher for the hardcoded geolocations
+var initialModal = true;
+var initialMap = true;
 var locations = {
-  //LTs
   'LT1':[1.299595, 103.771345],
   'LT2':[1.29699, 103.780984],
   'LT3':[1.29699, 103.780984],
@@ -41,7 +40,6 @@ var locations = {
   'LT34':[1.29777,103.780892],
   'LT35':[1.295509,103.781843],
 
-  //FASS
   'AS1':[1.295232,103.772176],
   'AS2':[1.295198,103.771381],
   'AS3':[1.294779,103.771234],
@@ -50,7 +48,6 @@ var locations = {
   'AS6':[1.295619,103.773223],
   'AS7':[1.294459,103.771143],
 
-  //Utown
   'UTSRC-LT50':[1.304338,103.773169],
   'UTSRC-LT51':[1.304186,103.773044],
   'UTSRC-LT52':[1.304061,103.773011],
@@ -64,8 +61,6 @@ var locations = {
   'UTSRC-GLR':[1.304429,103.772747],
   'ERC':[1.305881,103.772896],
 
-
-  //Engineering
   'EA':[1.300275,103.770508],
   'E1':[1.298747,103.771157],
   'E1A':[1.299402,103.770873],
@@ -79,18 +74,15 @@ var locations = {
   'E5':[1.29806,103.772444],
   'ENG':[1.300593,103.770639],
 
-  //Business
   'BIZ1':[1.293547,103.774316],
   'BIZ2':[1.293472,103.775281],
 
-  //Computing
   'COM1':[1.294965,103.773957],
   'COM2':[1.294335,103.774075],
   'i3':[1.29254,103.775601],
   'VCRm':[1.294947,103.774019],
   'RMI':[1.292439,103.775804],
 
-  //Science
   'S1':[1.295922,103.777842],
   'S2':[1.295721,103.778079],
   'S3':[1.295755,103.778646],
@@ -111,7 +103,6 @@ var locations = {
   'S17':[1.297778,103.780599],
   'S4A':[1.295973,103.77921],
 
-  //Medicine
   'MD1':[1.295361,103.780669],
   'MD2':[1.294951,103.781103],
   'MD3':[1.295404,103.781028],
@@ -126,19 +117,25 @@ var locations = {
   'MD11':[1.29605,103.781731],
   'FOD': [1.296962,103.781619],
 
-  //USP
   'USP-SR1':[1.30646,103.773571],
   'USP-SR2':[1.30646,103.773571],
   'USP-TR1':[1.30646,103.773571],
   'MLounge':[1.30646,103.773571],
 }
 
+function cleanInput (input) {
+  var div = document.createElement('div');
+  div.appendChild(document.createTextNode(input));
+  return div.innerHTML;
+}
+
 function addMessage(msg, nick) {
+  var message = cleanInput(msg);
   if(nick==="Me"){
-      $("#chatEntries").append('<br><br><div style="float:right; padding-right:35px; padding-bottom:20px">'+nick+'<br></div><br><br><div class="bubbleRight" >'+msg+ '</div>');
+      $("#chatEntries").append('<div class="row"><div class="me">' + nick + '</div><div class="bubble bubble-alt">' + message + '</div></div>');
   }
   else{
-      $("#chatEntries").append('<div style="float:left; padding-left:35px">'+nick+'</div><br><br><div class="bubbleLeft" >'+msg+ '</div>');
+      $("#chatEntries").append('<div class="row"><div class="you">' + nick + '</div><div class="bubble yellow">' + message + '</div></div>');
   }
 
   window.scrollTo(0,document.body.scrollHeight);
@@ -146,7 +143,7 @@ function addMessage(msg, nick) {
 
 function sentMessage(){
   if($('#messageInput').val() != ""){
-      socket.emit('message', $('#messageInput').val());
+      socket.emit('message', cleanInput($('#messageInput').val()));
       addMessage($('#messageInput').val(), "Me");
       $('#messageInput').val('');
   }
@@ -154,7 +151,7 @@ function sentMessage(){
 
 function setNick(){
   if($('#nickInput').val() != ""){
-      socket.emit('setNick', $("#nickInput").val());
+      socket.emit('setNick', cleanInput($("#nickInput").val()));
       $('#nickInput').val('');
       $('#chatControls').show();
   }
@@ -162,8 +159,8 @@ function setNick(){
 
 function createRoom(){
   socket.emit('setRoom', currentLoc);
-  $("#chatEntries").html(' <br><br><br><p>Welcome to '+ room +' <br> Click on <a href="#createRoom", data-toggle="modal"><span class="glyphicon glyphicon-globe"></span></a>&nbsp;at the top right hand corner to change rooms.</p>');
-  $('#messageInput').focus();
+  $("#chatEntries").html(' <br><br><br><p>Welcome to Building <b>'+ currentLoc +'</b> <br> Click on <a href="#createRoom", data-toggle="modal"><span class="glyphicon glyphicon-globe"></span></a>&nbsp;at the top right hand corner to change room/building.</p>');
+  $('#chatEntries').hide().fadeIn(5000);
 }
 
 socket.on('message', function(data){
@@ -171,15 +168,15 @@ socket.on('message', function(data){
 });
 
 socket.on('adminMessage', function(msg){
-  $("#chatEntries").append('<p><strong>' + msg + '<strong></p>');
+  $("#chatEntries").append('<p align="center">' + msg + '</p>');
 });
 
 socket.on('updateRooms', function(data){
   for(roomIndex in data.names){
     var room = data.names[roomIndex];
-    if(locations[room] != null){ // valid room (not those defaults)
-        if(markers[room] == null){ //if there is no marker for it
-          if(data.nums[room] != 0){ // if there is someone
+    if(locations[room] != null){
+        if(markers[room] == null){
+          if(data.nums[room] != 0){
             latlon = new google.maps.LatLng(locations[room][0], locations[room][1]);
             var marker = new MarkerWithLabel({
               position: latlon,
@@ -187,7 +184,7 @@ socket.on('updateRooms', function(data){
               draggable: false,
               labelContent: data.nums[room],
               icon: "images/chat_marker.png",
-              labelAnchor: new google.maps.Point(-11, 53), // Calibrated with image
+              labelAnchor: new google.maps.Point(-11, 53),
               labelClass: "labels",
               labelInBackground: false,
               animation: google.maps.Animation.DROP
@@ -200,7 +197,7 @@ socket.on('updateRooms', function(data){
             }
           }
         } else {
-          if(data.nums[room] != 0){ // if there is someone
+          if(data.nums[room] != 0){
             markers[room].set('labelContent', data.nums[room]);
           }else{
             markers[room].setMap(null);
@@ -216,46 +213,51 @@ socket.on('updateRooms', function(data){
 });
 
 function fixLocalScope(room, marker){
+  var content = "<div class='infowindow-content'>" + room + "</div>";
   var infowindow = new google.maps.InfoWindow({
-    content: room,
-    maxWidth: 100
+    content: content,
+    maxWidth: 300
   });
   google.maps.event.addListener(marker, "click", function () { socket.emit('setRoom', room);
-    $("#chatEntries").html(' <br><br><br><p>Welcome to '+ room +' <br> Click on <a href="#createRoom", data-toggle="modal"><span class="glyphicon glyphicon-globe"></span></a>&nbsp;at the top right hand corner to change rooms.</p>');
-    $('#createRoom').modal('hide'); $('#messageInput').focus(); });
+    $("#chatEntries").html(' <br><br><br><p>Welcome to Building <b>'+ room +'</b> <br> Click on <a href="#createRoom", data-toggle="modal"><span class="glyphicon glyphicon-globe"></span></a>&nbsp;at the top right hand corner to change room/building.</p>');
+    $('#createRoom').modal('hide');
+    $('#chatEntries').hide().fadeIn(5000);
+  });
   google.maps.event.addListener(marker, 'mouseover', function() { infowindow.open(map,marker); });
   google.maps.event.addListener(marker, "mouseout", function () { infowindow.close(); });
 }
 
 $(function() {
+  $("#locationStatus").text("loading");
+  getLocation();
   $('#nickMsg').html('<h3>What\'s your nickname?</h3>');
   $('#setNick').on('shown.bs.modal', function () {
     $('#nickInput').focus();
   })
+  $('#createRoom').on('hidden.bs.modal', function () {
+    $('#messageInput').focus();
+  })
+  $('#setNick').on('hidden.bs.modal', function () {
+    checkMenu();
+  })
   $('#setNick').modal('show');
   $("#chatControls").hide();
   $("#chatEntries").show();
-  $("#chatEntries").append(' <br><br><br><p>Welcome to CheatChat Lobby <br> Click on <a href="#createRoom", data-toggle="modal"><span class="glyphicon glyphicon-globe"></span></a>&nbsp;at the top right hand corner to start.</p>');
-  $("#locationStatus").text("loading");
+  $("#chatEntries").html(' <br><br><br><p>Welcome to CheatChat Lobby <br> Click on <a href="#createRoom", data-toggle="modal"><span class="glyphicon glyphicon-globe"></span></a>&nbsp;at the top right hand corner to start.</p>');
   $("#nickSet").click(function() {setNick()});
   $("#submit").click(function() {sentMessage()});
   $("#rmCreate").click(function() {createRoom()});
-  getLocation();
   $('#nickInput').bind("enterKey",function(e){
     if($('#nickInput').val() != ""){
-      $('#currentName').text('Currently as ' + $("#nickInput").val());
+      $('#currentName').text('Currently as ' + cleanInput($("#nickInput").val()));
       setNick();
       $('#setNick').modal('hide');
-      if(currentLoc.localeCompare('Outside NUS') != 0){
-        fixMap();
-      }
       setTimeout(function() {
-        $('#messageInput').focus();
         $('#nickMsg').html('<h3>Change your nickname?</h3>');
         $('#setNick').data('bs.modal').options.backdrop = 'true';
         $('#setNick').data('bs.modal').options.keyboard = 'true';
         $('#closeBtn').html('<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>');
-    }, 300);
+    }, 1000);
     }
   });
   $('#nickInput').keyup(function(e){
@@ -278,6 +280,37 @@ $(function() {
   });
 });
 
+function autoMap(){
+  if(initialMap == true){
+    fixMap();
+    initialMap = false;
+  }else{
+    $('#messageInput').focus();
+  }
+}
+
+function checkMenu() {
+  if(initialModal == true && currentLoc == null){
+    $('#loading').modal('show');
+    initialModal = false;
+  }
+  if (currentLoc == null) {
+      setTimeout("checkMenu();", 1000);
+      return;
+  } else {
+    $('#loading').modal('hide');
+    initialModal = false;
+    if(currentLoc.localeCompare('Outside NUS') != 0){
+      autoMap();
+    }else{
+      $("#chatEntries").html('<br><br><br><p>You are now assigned to speak with people <i>outside NUS</i>.</p>');
+      $('#chatEntries').hide().fadeIn(5000);
+      socket.emit('setRoom', currentLoc);
+      $('#messageInput').focus();
+    }
+  }
+}
+
 function fixMap(){
   $('#createRoom').modal('show');
   setTimeout(function() {
@@ -288,8 +321,16 @@ function fixMap(){
 }
 
 function getLocation() {
+  var geoOptions = {
+    enableHighAccuracy: true,
+    maximumAge        : 30000,
+    timeout           : 27000
+  };
+
   if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(showPosition);
+      navigator.geolocation.getCurrentPosition(showPosition, geoError, geoOptions);
+  } else {
+    geoError();
   }
 }
 
@@ -301,16 +342,13 @@ function showPosition(position) {
   socket.on('currentLoc', function(json){
     var jsonObj = $.parseJSON(json);
     if(jsonObj[0] != null) {
-      // in NUS, use first location (nearest based on json response)
       lat = jsonObj[0].lat;
       lon = jsonObj[0].lon;
       $('#locationStatus').text(jsonObj[0].name);
       currentLoc = jsonObj[0].code;
     } else {
-      // outside NUS
       currentLoc = 'Outside NUS';
       $('#locationStatus').text('Outside NUS');
-      socket.emit('setRoom', currentLoc);
     }
 
     if(currentLoc.localeCompare('Outside NUS') == 0){
@@ -334,4 +372,10 @@ function showPosition(position) {
       socket.emit('updateRooms');
     }, 1000);
   });
+}
+
+function geoError(){
+  $("[rel=tooltip]").tooltip({ placement: 'bottom'});
+  currentLoc = 'Outside NUS';
+  $('#locationStatus').text('Outside NUS');
 }

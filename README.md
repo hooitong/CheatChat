@@ -1,5 +1,33 @@
 CheatChat
 =========
+Milestone 2
+=========
+Video Demostration
+---------
+App Link
+---------
+Mock Location
+Actual Test Product
+
+Current Iteration
+---------
+As specified in milestone 1,
+> Convert user interface design into its CSS and HTML and integrate with app
+
+We have integrated Bootstrap such that the design can support multiple browsers as well as devices easily. The app design has completed in the first iteration and it is ready for acceptance testing by evaluator of this project.
+
+> Integrate NUS Living Labs API to check geographical location of user
+
+> Ability to segregate users into different rooms based on geographical location
+
+Author's Note for current iteration
+> We
+
+Next Iteration
+---------
+
+Milestone 1
+=========
 Overview / Ideation
 ---------
 **CheatChat** is an web application based on node.js aims to provide students situated at National Univeristy of Singapore to experience a new type of chat system based on each student's geographical location. This is to address the lack of anonymity factored by the dominance of SSO social networks such as Facebook and Twitter. We are aiming to achieve the level of *Gemini* during our course in CP3108B.
