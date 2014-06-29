@@ -4,7 +4,7 @@ Milestone 2
 =========
 Video Demostration
 ---------
-TBA
+[Link to YT Video](http://youtu.be/7QBCCd74C5U)
 
 App Link
 ---------
@@ -45,6 +45,8 @@ This time we will try to express our final iteration with user stories.
 - As a user, I want to create a chatroom notifying others about my location so that I can communicate with others with relative to where I am.
 
  > Note: The last two user stories have already been implemented but still can be improved (better geolocation algorithm) on this iteration. Overall, this iteration is focused on polishing the app.
+
+ > Note: There is also a bug with socket.io sockets where the disconnection event when a person leaves the page, it takes time for the event to fire which will affect names/rooms to still appear for awhile. This will be fixed in iteration 3.
 
 Time Log
 --------
