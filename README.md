@@ -14,7 +14,9 @@ We have uploaded our web app to an online server for demo purposes,
 
 However you are most likely to be confined in a room *'Outside NUS'* (unless you are in school) as the app is meant to be used in school. Thus you might not fully explore the user interface of the app. As such we have made setup a mock app which gives u a psuedo-location within the school to play around. Do note that both apps are independent of each other.
 
-[CheatChat (Mock Location) @ HerokuApp](http://cheatchat-mock.herokuapp.com)
+Recommended for Testing : 
+[CheatChat (Mock Location)](http://128.199.157.234:49153/)
+
 Current Iteration
 ---------
 ####Overview
@@ -45,8 +47,6 @@ This time we will try to express our final iteration with user stories.
 - As a user, I want to create a chatroom notifying others about my location so that I can communicate with others with relative to where I am.
 
  > Note: The last two user stories have already been implemented but still can be improved (better geolocation algorithm) on this iteration. Overall, this iteration is focused on polishing the app.
-
- > Note: There is also a bug with socket.io sockets where the disconnection event when a person leaves the page, it takes time for the event to fire which will affect names/rooms to still appear for awhile. This will be fixed in iteration 3.
 
 Time Log
 --------
