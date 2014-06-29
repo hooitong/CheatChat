@@ -48,6 +48,8 @@ This time we will try to express our final iteration with user stories.
 
  > Note: The last two user stories have already been implemented but still can be improved (better geolocation algorithm) on this iteration. Overall, this iteration is focused on polishing the app.
 
+ > Note: There is also a bug with socket.io sockets where the disconnection event when a person leaves the page, it takes time for the event to fire which will affect names/rooms to still appear for awhile. This will be fixed in iteration 3.
+
 Time Log
 --------
 Spreadsheet @ Google Drive : [https://docs.google.com/spreadsheets/d/1ULClgHvCBWqEZXoaCoqDxB9ZZP5fq1VSHCVIzsfRL8E/edit#gid=33422991](https://docs.google.com/spreadsheets/d/1ULClgHvCBWqEZXoaCoqDxB9ZZP5fq1VSHCVIzsfRL8E/edit#gid=33422991)
