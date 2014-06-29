@@ -292,6 +292,9 @@ function fixLocalScope(room, marker){
 }
 
 $(function() {
+  $(window).bind('beforeunload', function(){
+      socket.disconnect();
+  });
   $('#error').html('Name has already been taken.');
   $('#error').hide();
   $("#locationStatus").text("loading");
