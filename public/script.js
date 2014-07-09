@@ -2,9 +2,6 @@ var socket = io.connect();
 var map;
 var markers = {};
 var currentLoc;
-var currentBuilding;
-var initialModal = true;
-var initialMap = true;
 var locations = {
   'I3': [1.292297, 103.775867, 'I Cube'],
   'ISS': [1.292149, 103.776551, 'Institute Of Systems Science'],
@@ -189,40 +186,62 @@ var locations = {
   'OTH': [1.31926463466624, 103.817996222901, 'Oei Tiong Ham Building, BTC Campus']
 };
 
-function cleanInput(input) {
-  var div = document.createElement('div');
-  div.appendChild(document.createTextNode(input));
-  return div.innerHTML;
-}
+var initialModal = true,
+    initialMap = true;
+
+var chatColours = ['green', 'red', 'yellow', 'pink', 'white'];
+
+var frequency = 0;
+var penalty = 100;
+var lastMsg = new Date();
 
 function addMessage(msg, nick) {
-  var message = cleanInput(msg);
+  var message = html_sanitize(msg);
   if (nick === "Me") {
-    $("#chatEntries").append('<div class="row"><div class="me">' + nick + '</div><div class="bubble bubble-alt">' + message + '</div></div>');
+    $('<div class="row"><div class="me">' + nick + '</div><div class="bubble bubble-alt">' + message + '</div></div>').hide().appendTo('#chatEntries').fadeIn(200);
   } else {
-    $("#chatEntries").append('<div class="row"><div class="you">' + nick + '</div><div class="bubble yellow">' + message + '</div></div>');
+    $('<div class="row"><div class="you">' + nick + '</div><div class="bubble ' + getColour(nick) + '">' + message + '</div></div>').hide().appendTo('#chatEntries').fadeIn(200);
   }
 
   window.scrollTo(0, document.body.scrollHeight);
 }
 
+function getColour (nick) {
+  var hash = 7;
+  for (var i = 0; i < nick.length; i++) {
+     hash = nick.charCodeAt(i) + (hash << 5) - hash;
+  }
+  var index = Math.abs(hash % chatColours.length);
+  return chatColours[index];
+}
+
 function sentMessage() {
-  if ($('#messageInput').val() !== "") {
-    socket.emit('message', cleanInput($('#messageInput').val()));
-    addMessage($('#messageInput').val(), "Me");
-    $('#messageInput').val('');
+  if ($('#messageInput').val().trim() !== "") {
+    frequency -= (new Date() - lastMsg) * 0.05;
+    frequency = (frequency < 0) ? 0 : frequency;
+    if((frequency += penalty) < 1000){
+      socket.emit('message', html_sanitize($('#messageInput').val()));
+      addMessage($('#messageInput').val().trim(), "Me");
+      $('#messageInput').val('');
+    } else {
+      $('.alert').css('visibility', 'visible');
+      $('.alert').fadeIn(1000);
+      window.scrollTo(0, document.body.scrollHeight);
+      $('.alert').fadeOut(1000);
+    }
+    lastMsg = new Date();
   }
 }
 
 function setNick() {
-  if ($('#nickInput').val() !== "") {
-    socket.emit('setNick', cleanInput($("#nickInput").val()));
+  if ($('#nickInput').val().trim() !== "") {
+    socket.emit('setNick', html_sanitize($("#nickInput").val().trim()));
   }
 }
 
 function createRoom() {
   socket.emit('setRoom', currentLoc);
-  $("#chatEntries").html(' <br><br><br><p>Welcome to <b>' + locations[currentLoc][2] + '</b> <br> Click on <a href="#createRoom", data-toggle="modal"><span class="glyphicon glyphicon-globe"></span></a>&nbsp;at the top right hand corner to change room/building.</p>');
+  $("#chatEntries").html(' <br><br><br><p>Welcome to <b>' + html_sanitize(locations[currentLoc][2]) + '</b> <br> Click on <a href="#createRoom", data-toggle="modal"><span class="glyphicon glyphicon-globe"></span></a>&nbsp;at the top right hand corner to change room/building.</p>');
   $('#chatEntries').hide().fadeIn(3500);
 }
 
@@ -231,7 +250,8 @@ socket.on('message', function(data) {
 });
 
 socket.on('adminMessage', function(msg) {
-  $("#chatEntries").append('<p align="center">' + msg + '</p>');
+  $("#chatEntries").append('<p align="center">' + html_sanitize(msg) + '</p>');
+  window.scrollTo(0, document.body.scrollHeight);
 });
 
 socket.on('updateRooms', function(data) {
@@ -276,14 +296,14 @@ socket.on('updateRooms', function(data) {
 });
 
 function fixLocalScope(room, marker) {
-  var content = "<div class='infowindow-content'>" + locations[room][2] + "</div>";
+  var content = "<div class='infowindow-content'>" + html_sanitize(locations[room][2]) + "</div>";
   var infowindow = new google.maps.InfoWindow({
     content: content,
     maxWidth: 300
   });
   google.maps.event.addListener(marker, "click", function() {
     socket.emit('setRoom', room);
-    $("#chatEntries").html(' <br><br><br><p>Welcome to <b>' + locations[room][2] + '</b> <br> Click on <a href="#createRoom", data-toggle="modal"><span class="glyphicon glyphicon-globe"></span></a>&nbsp;at the top right hand corner to change room/building.</p>');
+    $("#chatEntries").html(' <br><br><br><p>Welcome to <b>' + html_sanitize(locations[room][2]) + '</b> <br> Click on <a href="#createRoom", data-toggle="modal"><span class="glyphicon glyphicon-globe"></span></a>&nbsp;at the top right hand corner to change room/building.</p>');
     $('#createRoom').modal('hide');
     $('#chatEntries').hide().fadeIn(3500);
   });
@@ -296,6 +316,7 @@ function fixLocalScope(room, marker) {
 }
 
 $(function() {
+  $('.alert').hide();
   $(window).bind('beforeunload', function() {
     socket.disconnect();
   });
@@ -324,14 +345,14 @@ $(function() {
     createRoom();
   });
   $('#nickInput').bind("enterKey", function(e) {
-    if ($('#nickInput').val() !== "") {
+    if ($('#nickInput').val().trim() !== "") {
       $('#error').hide();
       setNick();
       socket.on('nameTaken', function(isTaken) {
         if (isTaken) {
           $('#error').hide().fadeIn(2000);
         } else {
-          $('#currentName').text('Currently as ' + cleanInput($("#nickInput").val()));
+          $('#currentName').text('Currently as ' + html_sanitize($("#nickInput").val().trim()));
           $('#setNick').modal('hide');
           $('#chatControls').show();
           setTimeout(function() {
@@ -351,7 +372,7 @@ $(function() {
     }
   });
   $('#messageInput').bind("enterKey", function(e) {
-    if ($('#messageInput').val() !== "") {
+    if ($('#messageInput').val().trim() !== "") {
       sentMessage();
     }
   });
@@ -364,12 +385,12 @@ $(function() {
 });
 
 function checkMenu() {
-  if (initialModal === true && currentLoc === null) {
+  if (initialModal === true && currentLoc == null) {
     $('#loading').modal('show');
     initialModal = false;
   }
-  if (currentLoc === null) {
-    setTimeout(checkMenu(), 1000);
+  if (currentLoc === null || currentLoc === undefined) {
+    setTimeout(checkMenu, 3000);
     return;
   } else if (initialMap === true) {
     $('#loading').modal('hide');
@@ -424,7 +445,7 @@ function showPosition(position) {
     if (jsonObj[0] !== null && jsonObj[0] !== undefined) {
       lat = jsonObj[0].lat;
       lon = jsonObj[0].lon;
-      $('#locationStatus').text(jsonObj[0].name);
+      $('#locationStatus').text(html_sanitize(jsonObj[0].name));
       currentLoc = jsonObj[0].code;
     } else {
       currentLoc = 'Outside NUS';
