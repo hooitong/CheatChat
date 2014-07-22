@@ -5962,6 +5962,37 @@ div.infowindow-content {
   width: 400px;
 }
 
+#chatEntries {
+  text-align: center;
+  word-wrap:break-word;
+  padding-bottom: 50px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+#chatControls{
+  padding-bottom:10px;
+  padding-top:10px;
+  background-color:black;
+}
+
+#locationStatus{
+  cursor: hand;
+  cursor: pointer;
+}
+
+#currentName{
+  cursor: hand;
+  cursor: pointer;
+}
+
+#messageInput{
+  width:50%;
+  height:29px;
+  padding-left:5px;
+  padding-bottom:3px
+}
+
 .google-maps {
     position: relative;
     padding-bottom: 45%;
