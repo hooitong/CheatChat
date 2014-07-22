@@ -1,5 +1,9 @@
 CheatChat
 =========
+Milestone 3
+=========
+TBA
+
 Milestone 2
 =========
 Video Demostration
@@ -14,7 +18,7 @@ We have uploaded our web app to an online server for demo purposes,
 
 However you are most likely to be confined in a room *'Outside NUS'* (unless you are in school) as the app is meant to be used in school. Thus you might not fully explore the user interface of the app. As such we have made setup a mock app which gives u a psuedo-location within the school to play around. Do note that both apps are independent of each other.
 
-Recommended for Testing : 
+Recommended for Testing :
 [CheatChat (Mock Location)](http://128.199.157.234:49153/)
 
 Current Iteration

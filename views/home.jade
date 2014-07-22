@@ -3,7 +3,7 @@ html
   head
     title CheatChat
     meta(name='viewport' content='width=device-width, initial-scale=1')
-    link(rel='stylesheet', href='/bootstrap/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
     link(rel='stylesheet', href='bootstrap-tour.css')
   body
     div.container
@@ -18,19 +18,20 @@ html
               div.modal-body(align='center')
                 input(type='text' maxLength='20' id='nickInput')
 
-      div.modal.fade(id='createRoom' tabindex='-1' role='dialog' aria-labelledby='createRoom' aria-hidden='true')
+      div.modal.fade(id='createRoom' tabindex='-1' role='dialog' aria-labelledby='createRoom' aria-hidden='true' data-backdrop='static' data-keyboard='false')
         div.modal-dialog
           div.modal-content
-            div.modal-header
-              button.close(type='button' data-dismiss='modal' aria-hidden='true') &times;
-              div.modal-title(align='center')
+            div.modal-header(id='mapHeader')
+              div.modal-title(align='center' id='mapTitle')
                 h4 Chat Network Map
-                h6 Click on any chat marker to join the room at that building!
+                h5 Click on any building marker to join in the conversation or create your own room!
               div.modal-body
                 div.google-maps#mapholder
               div.modal-footer#creationSection
-                  button.btn.btn-primary#rmCreate(data-dismiss='modal')
-                    | Create
+                  button.btn.btn-warning#rmCreate(data-dismiss='modal')
+                    i.glyphicon.glyphicon-map-marker
+                    | &nbsp; Create
+
 
       div.modal.fade(id='loading' tabindex='-1' role='dialog' aria-labelledby='loading' aria-hidden='true' data-backdrop='static' data-keyboard='false')
         div.modal-dialog
@@ -78,8 +79,8 @@ html
           |Send &nbsp;
           i.glyphicon.glyphicon-send
 
+    script(src='http://maps.google.com/maps/api/js?sensor=false&key=AIzaSyA-cOJs2xiZt6-SkeE2a4Y7yOJa_8-ahjU')
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js')
-    script(src='http://maps.google.com/maps/api/js?sensor=false')
     script(src='validator.min.js')
     script(src='/bootstrap/js/bootstrap.min.js')
     script(src='bootstrap-tour.min.js')

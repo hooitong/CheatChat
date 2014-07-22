@@ -5962,8 +5962,11 @@ div.infowindow-content {
   width: 400px;
 }
 
-#chatEntries {
+#creationSection{
   text-align: center;
+}
+
+#chatEntries {
   word-wrap:break-word;
   padding-bottom: 50px;
   padding-left: 10px;

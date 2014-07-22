@@ -196,8 +196,8 @@ var socket = io.connect(),
   };
 
 var initialModal = true,
-  initialMap = true;
-
+  initialMap = true,
+  mapAfterLoad = false;
 var chatColours = ['green', 'red', 'yellow', 'pink', 'white'];
 
 var frequency = 0,
@@ -430,14 +430,24 @@ function checkMenu() {
     $('#loading').modal('hide');
     initialModal = false;
     initialMap = false;
-    openMap();
+    openMap(true);
   } else {
     $('#messageInput').focus();
   }
 }
 
-/* Function that fixes the partial loading issue on maps due to modal */
-function openMap() {
+/* Function that fixes the partial loading issue on maps due to modal
+ * If true, return locked modal else open modal.
+ */
+function openMap(locked) {
+  if (!locked && !mapAfterLoad) {
+    $('#createRoom').data('bs.modal').options.backdrop = true;
+    $('#createRoom').data('bs.modal').options.keyboard = true;
+    $('#mapHeader').prepend('<button type="button" class="close"' +
+      ' data-dismiss="modal" aria-hidden="true">&times;</button>');
+    mapAfterLoad = true;
+  }
+
   $('#createRoom').modal('show');
   setTimeout(function() {
     var center = map.getCenter();
@@ -482,10 +492,12 @@ function showPosition(position) {
     } else {
       currentLoc = 'Outside NUS';
       $('#locationStatus').text('Outside NUS');
+      $('#rmCreate').html('<i class="glyphicon glyphicon-map-marker"></i> &nbsp; Outside NUS');
+      $('#mapTitle').append('<p class="errorMsg">Due to your location, you cannot create a room within NUS.</p>');
     }
 
     $("#locationStatus").click(function() {
-      openMap();
+      openMap(false);
     });
 
     var latlon = new google.maps.LatLng(lat, lon);
