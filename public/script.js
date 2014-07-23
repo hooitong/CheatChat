@@ -200,7 +200,7 @@ var initialModal = true,
   initialMap = true,
   mapAfterLoad = false;
 var chatColours = ['green', 'red', 'yellow', 'pink', 'white'];
-
+var markerColours = ['red', 'darkblue', 'pink', 'orange', 'lightblue', 'green', 'purple'];
 var frequency = 0,
   penalty = 100,
   lastMsg = new Date();
@@ -321,7 +321,7 @@ function setNick() {
 function createRoom(location) {
   socket.emit('setRoom', location);
   $("#chatEntries").html(' <br><br><br><p>Welcome to <b>' +
-    location + '</b> <br> Click on ' +
+    locations[location][2] + '</b> <br> Click on ' +
     '<a href="#createRoom", data-toggle="modal"><span class="glyphicon' +
     ' glyphicon-globe"></span></a>&nbsp;at the top right hand corner to ' +
     'change room/building.</p>');
@@ -362,13 +362,14 @@ socket.on('updateRooms', function(data) {
       if (markers[room] === null || markers[room] === undefined) {
         if (data.nums[room] !== 0) {
           /* create marker for that room */
+          var color = markerColours[Math.floor(Math.random() * markerColours.length)];
           latlon = new google.maps.LatLng(locations[room][0], locations[room][1]);
           var marker = new MarkerWithLabel({
             position: latlon,
             map: map,
             draggable: false,
             labelContent: data.nums[room],
-            icon: "images/chat_marker.png",
+            icon: "images/chat_marker_" + color + '.png',
             labelAnchor: new google.maps.Point(-11, 53),
             labelClass: "labels",
             labelInBackground: false,
@@ -407,7 +408,7 @@ function addMarkerToMap(room, marker) {
     maxWidth: 300
   });
   google.maps.event.addListener(marker, "click", function() {
-    createRoom(locations[room][2]);
+    createRoom(room);
   });
   google.maps.event.addListener(marker, 'mouseover', function() {
     infowindow.open(map, marker);
