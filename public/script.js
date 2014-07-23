@@ -9,6 +9,7 @@
 /* Declare global variables */
 var socket = io.connect(),
   map,
+  tour,
   markers = {},
   currentLoc,
   locations = {
@@ -222,9 +223,13 @@ function preload() {
     $('#nickInput').focus();
   });
   $('#createRoom').on('hidden.bs.modal', function() {
+    $('#chatControls').show();
+    tour.start();
     $('#messageInput').focus();
   });
   $('#setNick').on('hidden.bs.modal', function() {
+    $('#error').hide();
+    $('#nickInput').val('');
     checkMenu();
   });
 
@@ -236,27 +241,9 @@ function preload() {
     if ($('#nickInput').val().trim() !== "") {
       $('#error').hide();
       setNick();
-      socket.on('nameTaken', function(isTaken) {
-        if (isTaken) {
-          $('#error').hide().fadeIn(2000);
-        } else {
-          $('#currentName').html('Currently as <b>' +
-            html_sanitize($("#nickInput").val().trim()) + '</b>');
-          $('#setNick').modal('hide');
-          $('#chatControls').show();
-
-          setTimeout(function() {
-            $('#nickMsg').html('<h3>Change your nickname?</h3>');
-            $('#setNick').data('bs.modal').options.backdrop = 'true';
-            $('#setNick').data('bs.modal').options.keyboard = 'true';
-            $('#closeBtn').prepend('<button type="button" class="close"' +
-              ' data-dismiss="modal" aria-hidden="true">&times;</button>');
-            $('#nickInput').val('');
-          }, 1000);
-        }
-      });
     }
   });
+
   $('#nickInput').keyup(function(e) {
     if (e.keyCode == 13) {
       $(this).trigger("enterKey");
@@ -283,8 +270,12 @@ function preload() {
 function addMessage(msg, nick) {
   var message = html_sanitize(msg);
   nick === 'Me' ?
-    $('<div class="row"><div class="me">' + nick + '</div><div class="bubble bubble-alt">' + message + '</div></div>').hide().appendTo('#chatEntries').fadeIn(200) :
-    $('<div class="row"><div class="you">' + nick + '</div><div class="bubble ' + getColour(nick) + '">' + message + '</div></div>').hide().appendTo('#chatEntries').fadeIn(200);
+    $('<div class="row"><div class="me">' + nick +
+      '</div><div class="bubble bubble-alt">' + message +
+      '</div></div>').hide().appendTo('#chatEntries').fadeIn(200) :
+    $('<div class="row"><div class="you">' + nick +
+      '</div><div class="bubble ' + getColour(nick) + '">' +
+      message + '</div></div>').hide().appendTo('#chatEntries').fadeIn(200);
 
   window.scrollTo(0, document.body.scrollHeight);
 }
@@ -337,6 +328,18 @@ function createRoom(location) {
   $('#createRoom').modal('hide');
   $('#chatEntries').hide().fadeIn(3500);
 }
+
+/* On response on set nickname from server */
+socket.on('nameTaken', function(isTaken) {
+  if (isTaken) {
+    $('#error').hide().fadeIn(2000);
+  } else {
+    $('#currentName').html('Currently as <b>' +
+      html_sanitize($("#nickInput").val().trim()) + '</b>');
+    $('#setNick').modal('hide');
+    $('#nickInput').val('');
+  }
+});
 
 /* On message broadcasted from server */
 socket.on('message', function(data) {
@@ -427,6 +430,11 @@ function checkMenu() {
     setTimeout(checkMenu, 2000);
     return;
   } else if (initialMap === true) {
+    $('#nickMsg').text('Change your nickname?');
+    $('#setNick').data('bs.modal').options.backdrop = 'true';
+    $('#setNick').data('bs.modal').options.keyboard = 'true';
+    $('#closeBtn').prepend('<button type="button" class="close"' +
+      ' data-dismiss="modal" aria-hidden="true">&times;</button>');
     $('#loading').modal('hide');
     initialModal = false;
     initialMap = false;
@@ -439,8 +447,8 @@ function checkMenu() {
 /* Function that fixes the partial loading issue on maps due to modal
  * If true, return locked modal else open modal.
  */
-function openMap(locked) {
-  if (!locked && !mapAfterLoad) {
+function openMap(isInitial) {
+  if (!isInitial && !mapAfterLoad) {
     $('#createRoom').data('bs.modal').options.backdrop = true;
     $('#createRoom').data('bs.modal').options.keyboard = true;
     $('#mapHeader').prepend('<button type="button" class="close"' +
@@ -489,46 +497,78 @@ function showPosition(position) {
       lon = jsonObj[0].lon;
       $('#locationStatus').text(html_sanitize(jsonObj[0].name));
       currentLoc = jsonObj[0].code;
+      initMap(lat, lon);
     } else {
-      currentLoc = 'Outside NUS';
-      $('#locationStatus').text('Outside NUS');
-      $('#rmCreate').html('<i class="glyphicon glyphicon-map-marker"></i> &nbsp; Outside NUS');
-      $('#mapTitle').append('<p class="errorMsg">Due to your location, you cannot create a room within NUS.</p>');
+      geoError();
     }
-
-    $("#locationStatus").click(function() {
-      openMap(false);
-    });
-
-    var latlon = new google.maps.LatLng(lat, lon);
-
-    var mapOptions = {
-      center: latlon,
-      zoom: 16,
-      mapTypeId: google.maps.MapTypeId.ROADMAP,
-      mapTypeControl: false,
-      navigationControlOptions: {
-        style: google.maps.NavigationControlStyle.SMALL
-      }
-    };
-
-    map = new google.maps.Map(document.getElementById('mapholder'), mapOptions);
-
-    /* Request an update of room list from server periodically, default: 1k ms*/
-    setInterval(function() {
-      socket.emit('updateRooms');
-    }, 1000);
   });
+}
+
+/* Function that initialise the Network Map of the client */
+function initMap(lat, lon) {
+  var latlon = new google.maps.LatLng(lat, lon);
+
+  var mapOptions = {
+    center: latlon,
+    zoom: 16,
+    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    mapTypeControl: false,
+    navigationControlOptions: {
+      style: google.maps.NavigationControlStyle.SMALL
+    }
+  };
+
+  map = new google.maps.Map(document.getElementById('mapholder'), mapOptions);
+  $("#locationStatus").click(function() {
+    openMap(false);
+  });
+  /* Request an update of room list from server periodically, default: 1k ms*/
+  setInterval(function() {
+    socket.emit('updateRooms');
+  }, 1000);
 }
 
 /* Failsafe function to assign user to Outside NUS if fail to get location */
 function geoError() {
   currentLoc = 'Outside NUS';
   $('#locationStatus').text('Outside NUS');
+  $('#rmCreate').html('<i class="glyphicon glyphicon-map-marker"></i> &nbsp; Outside NUS');
+  $('#mapTitle').append('<p class="errorMsg">Due to your location, you cannot create a room within NUS.</p>');
+  initMap(1.296087, 103.778443);
+}
+
+/* Function that setup Bootstrap Tour lib to provide guidance to users */
+function setupTour() {
+  tour = new Tour({
+    steps: [{
+      element: "#chatEntries",
+      title: "Welcome to CheatChat!",
+      content: "Here is where all the chat messages appears from you or other ppl in the same room.",
+      reflex: true,
+      placement: 'top'
+    }, {
+      element: "#currentName",
+      title: "Your current nickname",
+      content: "By clicking here, you can also change your username whenever you wish.",
+    }, {
+      element: "#locationStatus",
+      title: "Your current location",
+      content: "This is where you are at physically, you can click here to change rooms as desired.",
+      placement: 'left'
+    }, {
+      element: "#messageInput",
+      title: "Type whatever you want here",
+      content: "After that press send or enter and you're ready to go and have fun! Enjoy!",
+      placement: 'top'
+    }]
+  });
+
+  tour.init();
 }
 
 /* Load functions when DOM is ready */
 $(function() {
   getLocation(); /* get location of user */
+  setupTour(); /* initialize tour elements */
   preload(); /* preload all necessary to run app */
 });
