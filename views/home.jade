@@ -46,6 +46,17 @@ html
                   .rect5
                 h5 loading geolocation.
 
+      div.modal.fade(id='disconnected' tabindex='-1' role='dialog' aria-labelledby='disconnected' aria-hidden='true' data-backdrop='static' data-keyboard='false')
+        div.modal-dialog
+          div.modal-content
+            div.modal-header
+              div.modal-body(align='center')
+                h4 Opps! Looks like you have been disconnected from the server.
+                a(href='http://cheatchat.us')
+                  button.btn.btn-primary
+                    i.glyphicon.glyphicon-repeat
+                    | &nbsp; Rejoin
+
       nav.navbar-default.navbar-fixed-top(role='navigation')
         div.navbar-header
           button(type='button' class='navbar-toggle' data-toggle='collapse' data-target='.navbar-collapse')

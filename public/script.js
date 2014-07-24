@@ -232,6 +232,9 @@ function preload() {
     $('#nickInput').val('');
     checkMenu();
   });
+  $(window).bind('beforeunload', function() {
+    socket.disconnect();
+  });
 
   $('.alert').hide();
   $('#error').hide();
@@ -320,8 +323,8 @@ function setNick() {
 /* Function that create/join room at provided location */
 function createRoom(location) {
   socket.emit('setRoom', location);
-  $("#chatEntries").html(' <br><br><br><p>Welcome to <b>' +
-    locations[location][2] + '</b> <br> Click on ' +
+  var loc = location.localeCompare('Outside NUS') === 0 ? 'Outside NUS' : locations[location][2];
+  $("#chatEntries").html(' <br><br><br><p>Welcome to <b>' + loc + '</b> <br> Click on ' +
     '<a href="#createRoom", data-toggle="modal"><span class="glyphicon' +
     ' glyphicon-globe"></span></a>&nbsp;at the top right hand corner to ' +
     'change room/building.</p>');
@@ -350,6 +353,14 @@ socket.on('message', function(data) {
 socket.on('adminMessage', function(msg) {
   $("#chatEntries").append('<p align="center">' + html_sanitize(msg) + '</p>');
   window.scrollTo(0, document.body.scrollHeight);
+});
+
+/* On disconnection / connection error, show error message and provide refresh */
+socket.on('disconnect', function() {
+  $('#disconnected').modal('show');
+});
+socket.on('error', function() {
+  $('#disconnected').modal('show');
 });
 
 /* On current list of rooms (and details) sent from server */
