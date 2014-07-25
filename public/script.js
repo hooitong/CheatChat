@@ -214,7 +214,7 @@ function preload() {
   $("#submit").click(function() {
     sentMessage();
   });
-  $("#rmCreate").click(function() {
+  $("#rmCreate").unbind("click").click(function() {
     createRoom(currentLoc);
   });
 
