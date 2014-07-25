@@ -214,7 +214,7 @@ function preload() {
   $("#submit").click(function() {
     sentMessage();
   });
-  $("#rmCreate").unbind("click").click(function() {
+  $("#rmCreate").click(function() {
     createRoom(currentLoc);
   });
 
@@ -232,14 +232,13 @@ function preload() {
     $('#nickInput').val('');
     checkMenu();
   });
+
+  /* Set on unload to disconnect socket forcefully */
   $(window).bind('beforeunload', function() {
     socket.disconnect();
   });
 
-  $('.alert').hide();
-  $('#error').hide();
-  $("#locationStatus").text("loading");
-
+  /* Set button press behaviours */
   $('#nickInput').bind("enterKey", function(e) {
     if ($('#nickInput').val().trim() !== "") {
       $('#error').hide();
@@ -266,12 +265,14 @@ function preload() {
   /* hide and show the correct modal/elements on pageLoad */
   $("#chatControls").hide();
   $("#chatEntries").show();
+  $('.alert').hide();
+  $('#error').hide();
+  $("#locationStatus").text("loading");
   $('#setNick').modal('show');
 }
 
 /* Function that adds message into client's chatspace */
-function addMessage(msg, nick) {
-  var message = html_sanitize(msg);
+function addMessage(message, nick) {
   nick === 'Me' ?
     $('<div class="row"><div class="me">' + nick +
       '</div><div class="bubble bubble-alt">' + message +
@@ -295,11 +296,11 @@ function getColour(nick) {
 
 /* Function that sends message input to the server for broadcast */
 function sentMessage() {
-  if ($('#messageInput').val().trim() !== "") {
+  var message = validator.escape(html_sanitize($('#messageInput').val().trim()).trim());
+  if (message !== "") {
     frequency -= (new Date() - lastMsg) * 0.05;
     frequency = (frequency < 0) ? 0 : frequency;
     if ((frequency += penalty) < 1000) { /* if within threshold */
-      var message = html_sanitize($('#messageInput').val().trim());
       socket.emit('message', message);
       addMessage(message, "Me");
       $('#messageInput').val('');
@@ -315,8 +316,9 @@ function sentMessage() {
 
 /* Function that sets user's nickname */
 function setNick() {
-  if ($('#nickInput').val().trim() !== "") {
-    socket.emit('setNick', html_sanitize($("#nickInput").val().trim()));
+  var input = validator.escape(html_sanitize($('#nickInput').val().trim()).trim());
+  if (input !== "") {
+    socket.emit('setNick', input);
   }
 }
 
@@ -338,7 +340,7 @@ socket.on('nameTaken', function(isTaken) {
     $('#error').hide().fadeIn(2000);
   } else {
     $('#currentName').html('Currently as <b>' +
-      html_sanitize($("#nickInput").val().trim()) + '</b>');
+      validator.escape(html_sanitize($('#nickInput').val().trim()).trim()) + '</b>');
     $('#setNick').modal('hide');
     $('#nickInput').val('');
   }
@@ -351,7 +353,7 @@ socket.on('message', function(data) {
 
 /* On admin message broadcasted from server */
 socket.on('adminMessage', function(msg) {
-  $("#chatEntries").append('<p align="center">' + html_sanitize(msg) + '</p>');
+  $("#chatEntries").append('<p align="center">' + validator.escape(html_sanitize(msg.trim()).trim()) + '</p>');
   window.scrollTo(0, document.body.scrollHeight);
 });
 
@@ -413,7 +415,7 @@ socket.on('updateRooms', function(data) {
 /* Function that adds a room marker into the network map */
 function addMarkerToMap(room, marker) {
   var content = "<div class='infowindow-content'>" +
-    html_sanitize(locations[room][2]) + "</div>";
+    validator.escape(locations[room][2]) + "</div>";
   var infowindow = new google.maps.InfoWindow({
     content: content,
     maxWidth: 300
@@ -507,7 +509,7 @@ function showPosition(position) {
     if (jsonObj[0] !== null && jsonObj[0] !== undefined) {
       lat = jsonObj[0].lat;
       lon = jsonObj[0].lon;
-      $('#locationStatus').text(html_sanitize(jsonObj[0].name));
+      $('#locationStatus').text(validator.escape(jsonObj[0].name));
       currentLoc = jsonObj[0].code;
       initMap(lat, lon);
     } else {
