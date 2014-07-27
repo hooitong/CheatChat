@@ -2,11 +2,65 @@ CheatChat
 =========
 Milestone 3
 =========
-TBA
+Video Demonstration
+---------
+[Link to YT Video](TBA)
+
+App Link
+---------
+Just visit us at [cheatchat.us](http://cheatchat.us)
+
+Proposed Level of Achievement
+---------
+We proposed that our team should be granted Project Gemini (Intermediate) level of achievement.
+
+After attending the Liftoff and proposing our idea to the audience, we have been seeking methods/technologies to achieve our goals . At first we planned to use simple Python (Recommended) with Databasing where we store the chat log in the database and propagate to the user. It felt easy and we were comfortable with the technologies. However we decided to use a newer technology (Node.js) and WebSockets to achieve our goal. Not only does it provide a better user experience to the end-users but also challenges us to learn something new at the end of the project.
+
+With respect to peer evaluation, we tried to be honest about the score and provided feedbacks hoping that the receiving teams can improve based on them. The ideas of each team were excellent and we were hoping to see their ideas brought to life.
+
+As Project Gemini requires four additional features based on @159 on top of the basic requirements, here is what we have accomplished.
+
+> 1. Use an alternative platform based Ruby on Rails, PHP, etc. instead of GAE.
+
+As mentioned above, we decided to use Node.JS, HTML5 WebSockets to accomplish our project instead of the recommended GAE.
+
+> 2. Input validation and exception handling
+
+As the nature of our application is prone to malicious abuse, we decided to improve our input validation (e.g. injections, XSS attacks) as well as a anti-flood system to ensure that our users can use our application in peace.
+
+> 3. Google Maps API
+
+Google Maps is a very important tool that we used in our website as our chat application is based on geographical location. Thus we employed the Google Maps API to accomplish our task.
+
+> 4. Communicate with some web services using JSON, XML, or other communication format
+
+Of course we cannot only rely on Google Maps and HTML5 Geolocation as there is no way to tell which building you are at in NUS. Thus we perform a callback to the NUS Living Labs Nearby API and parsed the returned JSON to get the nearest building (which is the estimated building he is currently at) the user is at .
+
+> 5. Have the app displayed appropriately on different mobile clients
+
+As a good foundation practice, we decided to integrate Bootstrap as our core web framework, providing us the flexibility to adapt our web UI for different mobile clients (screen sizes).
+
+3rd Sprint / Milestone Features
+---------
+On the previous sprint we listed the user stories as of below for the current sprint and we believed that all features have been completed and ready for acceptance testing.
+
+- As a user, I can access CheatChat via my mobile devices so that I can access it whenever I want at school.
+- As a user, I can chat on CheatChat safe and secure against any potential malicious scripts by other users.
+- As a user, I can explore the campus on a map and join any existing conversations that are created by other users.
+- As a user, I want to create a chatroom notifying others about my location so that I can communicate with others with relative to where I am.
+
+However there is two issues currently unresolved,
+- While accessing our application from mobile devices, the lack of screen space makes the Network Map a tad too small for proper usage. However, it can still be used and functionality works per normal.
+
+- The accuracy of each user’s location in NUS cannot be guaranteed accurate. The limitations of HTML5 geolocation as well as Living Labs API cannot promise 100% accuracy rate.
+
+Time Log
+---------
+Spreadsheet @ Google Drive : [https://docs.google.com/spreadsheets/d/1ULClgHvCBWqEZXoaCoqDxB9ZZP5fq1VSHCVIzsfRL8E/edit#gid=33422991](https://docs.google.com/spreadsheets/d/1ULClgHvCBWqEZXoaCoqDxB9ZZP5fq1VSHCVIzsfRL8E/edit#gid=33422991)
 
 Milestone 2
 =========
-Video Demostration
+Video Demonstration
 ---------
 [Link to YT Video](http://youtu.be/7QBCCd74C5U)
 
