@@ -14,42 +14,50 @@ Proposed Level of Achievement
 ---------
 We proposed that our team should be granted Project Gemini (Intermediate) level of achievement.
 
-After attending the Liftoff and proposing our idea to the audience, we have been seeking methods/technologies to achieve our goals . At first we planned to use simple Python (Recommended) with Databasing where we store the chat log in the database and propagate to the user. It felt easy and we were comfortable with the technologies. However we decided to use a newer technology (Node.js) and WebSockets to achieve our goal. Not only does it provide a better user experience to the end-users but also challenges us to learn something new at the end of the project.
+After attending the Liftoff and proposing our idea to the audience, we have been seeking methods/technologies to achieve our goals. At first we planned to use Python (Recommended) with Databasing where we store the chat log in the database and propagate to each user in the application. It felt easy and we were comfortable with the technologies. However we decided to use a newer technology (Node.js) and WebSockets that were unexplored to us for achieving our goal. Not only does it provide a better user experience to the end-users but also challenges us to learn something new and practical by the end of the project.
+
+Thus throughout the entire 3 months of CP3108B, we decided to explore into version control and Agile methodology for developing our application. We were active on learning how to use GitHub ([Our Repo](https://github.com/Shenjinn/CheatChat)) for collaboration as well as using [Trello](https://trello.com/b/dBrOeT5H/cheatchat-cheatchat-us) to keep our objectives clearcut throughout the development phase. We felt that we were much prepared on applying the same techniques on the next module (CS2103).
 
 With respect to peer evaluation, we tried to be honest about the score and provided feedbacks hoping that the receiving teams can improve based on them. The ideas of each team were excellent and we were hoping to see their ideas brought to life.
 
-As Project Gemini requires four additional features based on @159 on top of the basic requirements, here is what we have accomplished.
+As Project Gemini requires four additional features based on @159 on top of the basic requirements, here are the five features that we have accomplished in our project,
 
-> 1. Use an alternative platform based Ruby on Rails, PHP, etc. instead of GAE.
+> 1) Use an alternative platform based Ruby on Rails, PHP, etc. instead of GAE.
 
 As mentioned above, we decided to use Node.JS, HTML5 WebSockets to accomplish our project instead of the recommended GAE.
 
-> 2. Input validation and exception handling
+> 2) Input validation and exception handling
 
-As the nature of our application is prone to malicious abuse, we decided to improve our input validation (e.g. injections, XSS attacks) as well as a anti-flood system to ensure that our users can use our application in peace.
+As the nature of our application is prone to malicious abuse, we decided to improve our input validation (e.g. injections, XSS attacks) as well as implementing an anti-flood system to ensure that our users can use our application in peace.
 
-> 3. Google Maps API
+> 3) Google Maps API
 
-Google Maps is a very important tool that we used in our website as our chat application is based on geographical location. Thus we employed the Google Maps API to accomplish our task.
+Google Maps is a very important tool that we used in our website as our chat application is heavily based on geographical location. Thus we took the opportunity to learn and integrated the Google Maps API into our application to accomplish our task.
 
-> 4. Communicate with some web services using JSON, XML, or other communication format
+> 4) Communicate with some web services using JSON, XML, or other communication format
 
-Of course we cannot only rely on Google Maps and HTML5 Geolocation as there is no way to tell which building you are at in NUS. Thus we perform a callback to the NUS Living Labs Nearby API and parsed the returned JSON to get the nearest building (which is the estimated building he is currently at) the user is at .
+Of course we cannot only rely on Google Maps and HTML5 Geolocation as there is no way to tell which building you are at in NUS. Thus, we perform a callback to the NUS Living Labs Nearby API and parsed the returned JSON to get the nearest building (the estimated building the user is currently at).
 
-> 5. Have the app displayed appropriately on different mobile clients
+> 5) Have the app displayed appropriately on different mobile clients
 
-As a good foundation practice, we decided to integrate Bootstrap as our core web framework, providing us the flexibility to adapt our web UI for different mobile clients (screen sizes).
+As a good foundation practice, we decided to learn and integrate Bootstrap as our core web framework, providing us the flexibility to adapt our web UI for different mobile clients (screen sizes).
 
 3rd Sprint / Milestone Features
 ---------
-On the previous sprint we listed the user stories as of below for the current sprint and we believed that all features have been completed and ready for acceptance testing.
+On the previous sprint we listed the user stories as of below planned for the current sprint and we believed that all features have been completed and ready for acceptance testing.
 
 - As a user, I can access CheatChat via my mobile devices so that I can access it whenever I want at school.
 - As a user, I can chat on CheatChat safe and secure against any potential malicious scripts by other users.
 - As a user, I can explore the campus on a map and join any existing conversations that are created by other users.
 - As a user, I want to create a chatroom notifying others about my location so that I can communicate with others with relative to where I am.
 
-However there is two issues currently unresolved,
+**In addition, we also completed further enhancements based on user’s feedback,**
+- We created a simple tour system (which only loads for first time users) that explains the user interface of our application.
+- As our application is centric around NUS, we decided that people outside NUS can only communicate with people outside NUS as well. However due to feedback, we thus allowed people outside NUS to join rooms available in NUS as well.
+- We enhanced the interface by provided more colour variations to our chat bubbles and map markers as well as providing feedback if an unexpected disconnection from the server would occur.
+- We took another look at the location accuracy by doing a site test and we managed to find and resolve a bug (where the radius of the user is too small). 
+
+**However there is two issues currently unresolved,**
 - While accessing our application from mobile devices, the lack of screen space makes the Network Map a tad too small for proper usage. However, it can still be used and functionality works per normal.
 
 - The accuracy of each user’s location in NUS cannot be guaranteed accurate. The limitations of HTML5 geolocation as well as Living Labs API cannot promise 100% accuracy rate.
