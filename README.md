@@ -4,7 +4,7 @@ Milestone 3
 =========
 Video Demonstration
 ---------
-[Link to YT Video](TBA)
+[Link to YT Video](http://youtu.be/wzX8oi2EymY)
 
 App Link
 ---------
@@ -56,6 +56,7 @@ On the previous sprint we listed the user stories as of below planned for the cu
 - As our application is centric around NUS, we decided that people outside NUS can only communicate with people outside NUS as well. However due to feedback, we thus allowed people outside NUS to join rooms available in NUS as well.
 - We enhanced the interface by provided more colour variations to our chat bubbles and map markers as well as providing feedback if an unexpected disconnection from the server would occur.
 - We took another look at the location accuracy by doing a site test and we managed to find and resolve a bug (where the radius of the user is too small). 
+- We further optimise our JS/CSS and page delivery as our previous application was too slow for our comfort level. Page speed evaluation tools were used such as Google PageSpeed, Pingdom, etc.
 
 **However there is two issues currently unresolved,**
 - While accessing our application from mobile devices, the lack of screen space makes the Network Map a tad too small for proper usage. However, it can still be used and functionality works per normal.
@@ -64,6 +65,8 @@ On the previous sprint we listed the user stories as of below planned for the cu
 
 Time Log
 ---------
+This time round we provided remarks to most of our activities in our log based on user feedbacks.
+
 Spreadsheet @ Google Drive : [https://docs.google.com/spreadsheets/d/1ULClgHvCBWqEZXoaCoqDxB9ZZP5fq1VSHCVIzsfRL8E/edit#gid=33422991](https://docs.google.com/spreadsheets/d/1ULClgHvCBWqEZXoaCoqDxB9ZZP5fq1VSHCVIzsfRL8E/edit#gid=33422991)
 
 Milestone 2
