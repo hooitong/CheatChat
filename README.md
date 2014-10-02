@@ -2,7 +2,7 @@ CheatChat
 =========
 Milestone 3
 =========
-TBA
+Missed the actual commit on information about Milestone 3. However Orbital is over and we successfully completed the first iteration of CheatChat and got Project Gemini Level of Achievement !! :)
 
 Milestone 2
 =========
